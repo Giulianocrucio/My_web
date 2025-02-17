@@ -1,12 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrow Follows Mouse</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .arrow {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 20px solid black;
+      transition: all 0.1s ease-out;
+      transform-origin: center center;
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Website!</h1>
-    <p>This is hosted on GitHub Pages.</p>
+  <div class="arrow" id="arrow"></div>
+
+  <script>
+    const arrow = document.getElementById('arrow');
+
+    document.addEventListener('mousemove', (event) => {
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+
+      const arrowX = mouseX - arrow.offsetWidth / 2;
+      const arrowY = mouseY - arrow.offsetHeight / 2;
+
+      arrow.style.left = `${arrowX}px`;
+      arrow.style.top = `${arrowY}px`;
+
+      const angle = Math.atan2(mouseY - (arrowY + arrow.offsetHeight / 2), mouseX - (arrowX + arrow.offsetWidth / 2)) * 180 / Math.PI;
+      arrow.style.transform = `rotate(${angle}deg)`;
+    });
+  </script>
 </body>
 </html>
