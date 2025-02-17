@@ -1,49 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Centered Arrow Following Mouse</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0f0f0;
-    }
-
-    .arrow {
-      font-size: 48px;
-      position: absolute;
-      transform-origin: center;
-      transition: transform 0.1s ease-out;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Portfolio</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <div class="arrow">➜</div>
-
-  <script>
-    const arrow = document.querySelector('.arrow');
-
-    document.addEventListener('mousemove', (event) => {
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      const mouseX = event.clientX;
-      const mouseY = event.clientY;
-
-      // Calculate the angle between the center and the mouse position
-      const deltaX = mouseX - centerX;
-      const deltaY = mouseY - centerY;
-      const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-
-      // Apply the rotation to the arrow
-      arrow.style.transform = `rotate(${angle}deg)`;
-    });
-  </script>
+    <header>
+        <h1>Welcome</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="paint.html">Paint</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="intro">
+            <h2>Hi</h2>
+            <p>Welcome to my personal website
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 [Your Name]. All rights reserved.</p>
+    </footer>
 </body>
 </html>
