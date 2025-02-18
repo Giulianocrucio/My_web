@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draw Points with Linear Regression</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+
+    #colorPicker {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    canvas {
+      display: block;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <input type="color" id="colorPicker" value="#ff0000">
+  <canvas id="drawingCanvas"></canvas>
+
+  <!-- Link to the external JavaScript file -->
+  <script src="js/brain.js"></script>
+</body>
+</html>
