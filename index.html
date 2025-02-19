@@ -52,12 +52,6 @@
     </style>
 </head>
 <body>
-    <h2>Python Code Executor</h2>
-    <textarea id="code" placeholder="Write Python code here..."></textarea>
-    <br>
-    <button onclick="runCode()">Run Code</button>
-    <h3>Output:</h3>
-    <pre id="output"></pre>
 
     <h2>Function Plotter</h2>
     <input type="text" id="function" placeholder="Enter function (e.g., x**2, np.sin(x))">
@@ -65,7 +59,13 @@
     <button onclick="plotFunction()">Generate Plot</button>
     <br>
     <img id="plot" src="" alt="Your graph will appear here">
-
+    
+    <h2>Python Code Executor</h2>
+    <textarea id="code" placeholder="Write Python code here..."></textarea>
+    <br>
+    <button onclick="runCode()">Run Code</button>
+    <h3>Output:</h3>
+    <pre id="output"></pre>
     <script>
         async function runCode() {
             const code = document.getElementById("code").value;
