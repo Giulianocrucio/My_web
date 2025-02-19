@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 from flask_cors import CORS
+import sys
+import contextlib
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
@@ -19,10 +21,16 @@ def run_python_code():
     try:
         # Create a dictionary to capture the local variables
         local_vars = {}
-        exec(code, {}, local_vars)
-        output = local_vars.get('output', 'Code executed successfully.')
+        # Redirect stdout to capture print statements
+        with io.StringIO() as buf, contextlib.redirect_stdout(buf):
+            exec(code, {}, local_vars)
+            output = buf.getvalue()
+        # If no output was captured, provide a default message
+        if not output.strip():
+            output = 'Code executed successfully.'
     except Exception as e:
         output = str(e)
+
     return jsonify({"output": output})
 
 @app.route("/plot", methods=["POST"])
