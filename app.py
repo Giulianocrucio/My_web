@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 from flask_cors import CORS
-import subprocess
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
@@ -18,16 +17,12 @@ def run_python_code():
     code = data.get("code", "")
 
     try:
-        result = subprocess.run(
-            ["python3", "-c", code],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
-        output = result.stdout if result.returncode == 0 else result.stderr
+        # Create a dictionary to capture the local variables
+        local_vars = {}
+        exec(code, {}, local_vars)
+        output = local_vars.get('output', 'Code executed successfully.')
     except Exception as e:
         output = str(e)
-
     return jsonify({"output": output})
 
 @app.route("/plot", methods=["POST"])
