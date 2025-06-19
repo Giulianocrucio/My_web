@@ -2,50 +2,197 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Malware Data Display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falling Box Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        th { background: #f4f4f4; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+        }
+        canvas {
+            border: 2px solid #4a4a6a;
+            background: #16213e;
+            display: block;
+            margin: 20px auto;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            background: #0f3460;
+            color: white;
+            border: 2px solid #4a4a6a;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1a4a7a;
+        }
+        .info {
+            text-align: center;
+            margin: 20px;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
-    <h1>Malware URLs and Families</h1>
-    <table id="malware-table">
-        <thead>
-            <tr>
-                <th>Malware URL</th>
-                <th>Family</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be inserted here -->
-        </tbody>
-    </table>
+    <h1 style="text-align: center;">Physics Simulation - Falling Box Demo</h1>
+    
+    <div class="controls">
+        <button onclick="addBox()">Add Box</button>
+        <button onclick="addCircle()">Add Circle</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    
+    <canvas id="canvas" width="800" height="600"></canvas>
+    
+    <div class="info">
+        <p>Click "Add Box" or "Add Circle" to drop objects. They'll fall and bounce realistically!</p>
+        <p>This uses Matter.js physics engine - perfect for your rocket project.</p>
+    </div>
+
     <script>
-        async function fetchAndDisplayMalwareData() {
-            const url = 'https://urlhaus.abuse.ch/downloads/csv_online/';
-            const response = await fetch(url);
-            const text = await response.text();
+        // Matter.js modules
+        const Engine = Matter.Engine;
+        const Render = Matter.Render;
+        const World = Matter.World;
+        const Bodies = Matter.Bodies;
+        const Body = Matter.Body;
+        const Events = Matter.Events;
 
-            const lines = text.split('\n');
-            const tbody = document.getElementById('malware-table').querySelector('tbody');
+        // Create engine
+        const engine = Engine.create();
+        const world = engine.world;
 
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                if (line.startsWith('#') || !line.trim()) continue;
-                const cols = line.split('","').map(s => s.replace(/^"|"$/g, ''));
-                // CSV columns: id,dateadded,url,url_status,threat,tags,urlhaus_link,reporter,malware_family
-                if (cols.length < 9) continue;
-                const malwareUrl = cols[2];
-                const malwareFamily = cols[8];
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${malwareUrl}</td><td>${malwareFamily}</td>`;
-                tbody.appendChild(tr);
+        // Create renderer
+        const canvas = document.getElementById('canvas');
+        const render = Render.create({
+            canvas: canvas,
+            engine: engine,
+            options: {
+                width: 800,
+                height: 600,
+                wireframes: false,
+                background: '#16213e',
+                showVelocity: true,
+                showAngleIndicator: true
             }
+        });
+
+        // Create ground
+        const ground = Bodies.rectangle(400, 580, 800, 40, { 
+            isStatic: true,
+            render: {
+                fillStyle: '#4a4a6a'
+            }
+        });
+
+        // Create walls
+        const leftWall = Bodies.rectangle(20, 300, 40, 600, { 
+            isStatic: true,
+            render: {
+                fillStyle: '#4a4a6a'
+            }
+        });
+        const rightWall = Bodies.rectangle(780, 300, 40, 600, { 
+            isStatic: true,
+            render: {
+                fillStyle: '#4a4a6a'
+            }
+        });
+
+        // Add ground and walls to world
+        World.add(world, [ground, leftWall, rightWall]);
+
+        // Create initial falling box
+        const initialBox = Bodies.rectangle(400, 50, 60, 60, {
+            render: {
+                fillStyle: '#e74c3c'
+            },
+            restitution: 0.6,
+            friction: 0.1
+        });
+        World.add(world, initialBox);
+
+        // Function to add a new box
+        function addBox() {
+            const x = Math.random() * 600 + 100;
+            const box = Bodies.rectangle(x, 50, 
+                Math.random() * 40 + 30, 
+                Math.random() * 40 + 30, {
+                render: {
+                    fillStyle: `hsl(${Math.random() * 360}, 70%, 60%)`
+                },
+                restitution: Math.random() * 0.8 + 0.2,
+                friction: Math.random() * 0.3
+            });
+            World.add(world, box);
         }
-        fetchAndDisplayMalwareData();
+
+        // Function to add a new circle
+        function addCircle() {
+            const x = Math.random() * 600 + 100;
+            const circle = Bodies.circle(x, 50, Math.random() * 25 + 15, {
+                render: {
+                    fillStyle: `hsl(${Math.random() * 360}, 70%, 60%)`
+                },
+                restitution: Math.random() * 0.9 + 0.1,
+                friction: Math.random() * 0.3
+            });
+            World.add(world, circle);
+        }
+
+        // Function to reset the simulation
+        function reset() {
+            World.clear(world);
+            Engine.clear(engine);
+            
+            // Re-add ground and walls
+            World.add(world, [ground, leftWall, rightWall]);
+            
+            // Add initial box
+            const newBox = Bodies.rectangle(400, 50, 60, 60, {
+                render: {
+                    fillStyle: '#e74c3c'
+                },
+                restitution: 0.6,
+                friction: 0.1
+            });
+            World.add(world, newBox);
+        }
+
+        // Run the engine
+        Engine.run(engine);
+
+        // Run the renderer
+        Render.run(render);
+
+        // Add some gravity variation for fun
+        engine.world.gravity.y = 1;
+
+        // Optional: Add mouse interaction
+        const mouse = Matter.Mouse.create(canvas);
+        const mouseConstraint = Matter.MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: false
+                }
+            }
+        });
+        World.add(world, mouseConstraint);
+
+        // Keep the mouse in sync with rendering
+        render.mouse = mouse;
     </script>
 </body>
 </html>
