@@ -107,6 +107,28 @@ function reset() {
     World.add(world, newBox);
 }
 
+// Function to get the count of boxes
+function getBoxCount() {
+    // Count only dynamic rectangles (boxes)
+    return world.bodies.filter(b => 
+        b.label === 'Rectangle Body' && !b.isStatic
+    ).length;
+}
+
+// Function to report the box count to the server
+// to learn get and save data in local about the simulation
+function reportBoxCount() {
+    const count = getBoxCount();
+    fetch('http://localhost:3001/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+    }).catch(() => {});
+}
+
+// Call reportBoxCount every second
+setInterval(reportBoxCount, 1000);
+
 // Run the engine
 Engine.run(engine);
 
