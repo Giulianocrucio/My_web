@@ -62,30 +62,33 @@ function addBox() {
 function reset() {
     World.clear(world);
     Engine.clear(engine);
-    
-    // Re-add ground and walls
-    World.add(world, [ground, leftWall, rightWall]);
-    
-    // Add initial box
-    const newBox = Bodies.rectangle(400, 50, 60, 60, {
-        render: {
-            fillStyle: '#e74c3c'
-        },
-        restitution: 0.6,
-        friction: 0.1
-    });
-    World.add(world, newBox);
+    initWorld();
 }
+
 function createRocket() {
     const box = new rocketBodies();
-    rocket = box.box;
+    rocket = box.rk;
     World.add(world, rocket);
 }
+
 function initWorld(){
     World.add(world, ground);
     createRocket();
 
 }
+
+function xyangle(angl){
+    const x = Math.cos(angl);
+    const y = Math.sin(angl);
+    return { x, y };
+}
+function logRocketAngle() {
+    if (rocket) {
+        console.log('Rocket angle :', xyangle(rocket.angle));
+    }
+    requestAnimationFrame(logRocketAngle);
+}
+logRocketAngle();
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
