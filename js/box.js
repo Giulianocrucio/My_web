@@ -62,6 +62,7 @@ World.add(world, initialBox);
 
 // Function to add a new box
 function addBox() {
+    if (Math.random() < 0.25){
     const x = Math.random() * 600 + 100;
     const box = Bodies.rectangle(x, 50, 
         Math.random() * 40 + 30, 
@@ -73,6 +74,24 @@ function addBox() {
         friction: Math.random() * 0.3
     });
     World.add(world, box);
+}
+else{
+    const x = Math.random() * 600 + 100;
+    const width = Math.random() * 40 + 30;
+    const height = Math.random() * 40 + 30;
+    const box = Bodies.rectangle(x, 50, width, height, {
+        render: {
+            fillStyle: `hsl(${Math.random() * 360}, 80%, 50%)`
+        },
+        restitution: Math.random() * 0.8 + 0.2,
+        friction: Math.random() * 0.3
+    });
+    World.add(world, box);
+
+    // Continuously apply a constant force
+
+    // TO IMPLEMENT 
+}
 }
 
 // Function to add a new circle
