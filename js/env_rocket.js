@@ -1,4 +1,5 @@
 import { rocketBodies } from './rocket.js';
+let rocket;
 
 // Matter.js modules
 const Engine = Matter.Engine;
@@ -41,12 +42,8 @@ const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, {
 });
 
 
-// Add ground and walls to world
-World.add(world, ground);
-
 // Function to add a new box
 function addBox() {
-    if (Math.random() < 0.25){
     const x = Math.random() * 600 + 100;
     const box = Bodies.rectangle(x, 50, 
         Math.random() * 40 + 30, 
@@ -58,11 +55,6 @@ function addBox() {
         friction: Math.random() * 0.3
     });
     World.add(world, box);
-    }
-    else{
-        const rocket = new rocketBodies();
-        World.add(world, rocket.box);
-    }
 }
 
 
@@ -84,8 +76,16 @@ function reset() {
     });
     World.add(world, newBox);
 }
+function createRocket() {
+    const box = new rocketBodies();
+    rocket = box.box;
+    World.add(world, rocket);
+}
+function initWorld(){
+    World.add(world, ground);
+    createRocket();
 
-
+}
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
@@ -96,7 +96,6 @@ Render.run(render);
 // Add some gravity variation for fun
 engine.world.gravity.y = 1;
 
-// Keep the mouse in sync with rendering
-
+initWorld();
 window.addBox = addBox;
 window.reset = reset;
