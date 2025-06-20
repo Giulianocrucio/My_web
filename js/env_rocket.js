@@ -134,6 +134,33 @@ function logRocketAngle() {
 }
 logRocketAngle();
 
+        // Keyboard event listeners
+        document.addEventListener('keydown', function(event) {
+            switch(event.key.toLowerCase()) {
+                case 'w':
+                    w();
+                    break;
+                case 'a':
+                    a();
+                    break;
+                case 'd':
+                    d();
+                    break;
+            }
+        });
+
+        function w() {
+            console.log('W key pressed - move up');
+        }
+
+        function a() {
+            console.log('A key pressed - move left');
+        }
+
+        function d() {
+            console.log('D key pressed - move right');
+        }
+
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
 
