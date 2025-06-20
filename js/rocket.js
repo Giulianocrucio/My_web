@@ -52,4 +52,41 @@ export class rocketBodies {
         
         Body.applyForce(this.rk, pos_centralF, forceVector);
     }
+
+    left_force(forceMagnitude) {
+        const direction = this.xyangle(this.rk.angle - Math.PI / 3);
+        const halfHeight = (this.rk.bounds.max.y - this.rk.bounds.min.y) / 2;
+        const offsetX = -halfHeight * Math.sin(this.rk.angle);
+        const offsetY = halfHeight * Math.cos(this.rk.angle);
+        
+        const pos_centralF = {
+            x: this.rk.position.x + offsetX,
+            y: this.rk.position.y + offsetY
+        };
+        
+        const forceVector = {
+            x: direction.x * forceMagnitude,
+            y: direction.y * forceMagnitude
+        };
+        
+        Body.applyForce(this.rk, pos_centralF, forceVector);
+    }
+    right_force(forceMagnitude) {
+        const direction = this.xyangle(this.rk.angle - (5*Math.PI / 6));
+        const halfHeight = (this.rk.bounds.max.y - this.rk.bounds.min.y) / 2;
+        const offsetX = -halfHeight * Math.sin(this.rk.angle);
+        const offsetY = halfHeight * Math.cos(this.rk.angle);
+        
+        const pos_centralF = {
+            x: this.rk.position.x + offsetX,
+            y: this.rk.position.y + offsetY
+        };
+        
+        const forceVector = {
+            x: direction.x * forceMagnitude,
+            y: direction.y * forceMagnitude
+        };
+        
+        Body.applyForce(this.rk, pos_centralF, forceVector);
+    }
 }
