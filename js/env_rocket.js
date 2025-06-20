@@ -77,10 +77,11 @@ function initWorld(){
     createRocket();
 }
 
-function xyangle(angl){
-    const x = Math.cos(angl);
-    const y = Math.sin(angl);
-    return { x, y };
+function xyangle(angle) {
+    return {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    };
 }
 
 // Function to render the direction vector
@@ -94,7 +95,7 @@ function renderDirectionVector() {
     };
 
     // compute the "shift"
-    const shift = Math.PI /4;
+    const shift = Math.PI /2;
 
     // Get direction vector
     const direction = xyangle(rocketB.angle + shift);

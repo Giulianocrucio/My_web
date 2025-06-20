@@ -22,13 +22,14 @@ export class rocketBodies {
             fillStyle: 'red'
             },
             restitution: 0.6,
-            friction: 0.15
+            friction: 0.15,
+            angularDamping: 0.2
         });
     }
 
     // Method to apply force to the body
     central_force(forceVector) {
-        Body.applyForce(this.rk, this.getBottomRightPosition(), forceVector);
+        Body.applyForce(this.rk, this.getBottomPosition(), forceVector);
     }
 
     Body_direction(){
@@ -37,16 +38,16 @@ export class rocketBodies {
         return { x, y };
     }
 
-    getBottomRightPosition() {
+    getBottomPosition() {
         // Get the angle of the body
         const angle = this.rk.angle;
-        // Get half width and half height
-        const halfWidth = (this.rk.bounds.max.x - this.rk.bounds.min.x) / 2;
+        // Get half height
         const halfHeight = (this.rk.bounds.max.y - this.rk.bounds.min.y) / 2;
-        // Calculate the offset from the center to the bottom right corner
-        const offsetX = halfWidth * Math.cos(angle) - halfHeight * Math.sin(angle);
-        const offsetY = halfWidth * Math.sin(angle) + halfHeight * Math.cos(angle);
-        // Return the absolute position of the bottom right corner
+        // Calculate the offset from the center to the bottom center
+        // Only vertical offset (downwards in local coordinates)
+        const offsetX = -halfHeight * Math.sin(angle);
+        const offsetY = halfHeight * Math.cos(angle);
+        // Return the absolute position of the bottom center
         return {
             x: this.rk.position.x + offsetX,
             y: this.rk.position.y + offsetY
