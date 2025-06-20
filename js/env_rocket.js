@@ -74,7 +74,6 @@ function createRocket() {
 function initWorld(){
     World.add(world, ground);
     createRocket();
-
 }
 
 function xyangle(angl){
@@ -82,9 +81,68 @@ function xyangle(angl){
     const y = Math.sin(angl);
     return { x, y };
 }
+
+// Function to render the direction vector
+function renderDirectionVector() {
+    if (!rocket) return;
+    
+    const context = render.context;
+    const center = {
+        x: rocket.position.x,
+        y: rocket.position.y
+    };
+    
+    // Get direction vector
+    const direction = xyangle(rocket.angle);
+    const length = 50; // Length of the vector
+    
+    // Calculate end point
+    const end = {
+        x: center.x + direction.x * length,
+        y: center.y + direction.y * length
+    };
+    
+    // Save context state
+    context.save();
+    
+    // Draw the vector line
+    context.beginPath();
+    context.moveTo(center.x, center.y);
+    context.lineTo(end.x, end.y);
+    context.lineWidth = 2;
+    context.strokeStyle = 'blue';
+    context.stroke();
+    
+    // Draw arrow head
+    const headLength = 10;
+    const angle = Math.atan2(end.y - center.y, end.x - center.x);
+    context.beginPath();
+    context.moveTo(end.x, end.y);
+    context.lineTo(
+        end.x - headLength * Math.cos(angle - Math.PI / 6),
+        end.y - headLength * Math.sin(angle - Math.PI / 6)
+    );
+    context.moveTo(end.x, end.y);
+    context.lineTo(
+        end.x - headLength * Math.cos(angle + Math.PI / 6),
+        end.y - headLength * Math.sin(angle + Math.PI / 6)
+    );
+    context.strokeStyle = 'blue';
+    context.stroke();
+    
+    // Restore context state
+    context.restore();
+}
+
+// Add the vector rendering to the afterRender event
+Events.on(render, 'afterRender', function() {
+    renderDirectionVector();
+});
+
 function logRocketAngle() {
     if (rocket) {
-        console.log('Rocket angle :', xyangle(rocket.angle));
+        console.log('Rocket angle:', xyangle(rocket.angle));
+        console.log('Rocket position:', { x: rocket.position.x, y: rocket.position.y });
     }
     requestAnimationFrame(logRocketAngle);
 }
