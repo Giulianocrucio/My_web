@@ -95,7 +95,7 @@ function renderDirectionVector() {
     };
 
     // compute the "shift"
-    const shift = Math.PI /2;
+    const shift = (5*Math.PI / 6) ;
 
     // Get direction vector
     const direction = xyangle(rocketB.angle + shift);
@@ -154,8 +154,16 @@ document.addEventListener('keyup', (event) => {
 
 Events.on(engine, 'beforeUpdate', () => {
     if (keys.w && rocket) {
-        const forceMagnitude = 0.01; 
+        const forceMagnitude = 0.007; 
         rocket.central_force(forceMagnitude);
+    }
+        if (keys.a && rocket) {
+        const forceMagnitude = 0.007; 
+        rocket.right_force(forceMagnitude);
+    }
+        if (keys.d && rocket) {
+        const forceMagnitude = 0.007;; 
+        rocket.left_force(forceMagnitude);
     }
 });
 
