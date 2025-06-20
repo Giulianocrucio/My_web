@@ -60,6 +60,12 @@
         .small-btn:hover {
             filter: brightness(1.1);
         }
+        .key-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -67,8 +73,38 @@
         <button type="button" onclick="addBox()">Add rocket</button>
         <button type="button" onclick="reset()">Reset</button>
     </div>
+    <div class="key-info">Use W, A, D keys to control the rocket</div>
     <canvas id="canvas" width="1200" height="800"></canvas>
     
     <script type="module" src="../js/env_rocket.js"></script>
+    
+    <script>
+        // Keyboard event listeners
+        document.addEventListener('keydown', function(event) {
+            switch(event.key.toLowerCase()) {
+                case 'w':
+                    w();
+                    break;
+                case 'a':
+                    a();
+                    break;
+                case 'd':
+                    d();
+                    break;
+            }
+        });
+
+        function w() {
+            console.log('W key pressed - move up');
+        }
+
+        function a() {
+            console.log('A key pressed - move left');
+        }
+
+        function d() {
+            console.log('D key pressed - move right');
+        }
+    </script>
 </body>
 </html>

@@ -91,10 +91,13 @@ function renderDirectionVector() {
         x: rocket.position.x,
         y: rocket.position.y
     };
-    
+
+    // compute the "shift"
+    const shift = Math.PI /4;
+
     // Get direction vector
-    const direction = xyangle(rocket.angle);
-    const length = 50; // Length of the vector
+    const direction = xyangle(rocket.angle + shift);
+    const length = 80; // Length of the vector
     
     // Calculate end point
     const end = {
@@ -110,23 +113,6 @@ function renderDirectionVector() {
     context.moveTo(center.x, center.y);
     context.lineTo(end.x, end.y);
     context.lineWidth = 2;
-    context.strokeStyle = 'blue';
-    context.stroke();
-    
-    // Draw arrow head
-    const headLength = 10;
-    const angle = Math.atan2(end.y - center.y, end.x - center.x);
-    context.beginPath();
-    context.moveTo(end.x, end.y);
-    context.lineTo(
-        end.x - headLength * Math.cos(angle - Math.PI / 6),
-        end.y - headLength * Math.sin(angle - Math.PI / 6)
-    );
-    context.moveTo(end.x, end.y);
-    context.lineTo(
-        end.x - headLength * Math.cos(angle + Math.PI / 6),
-        end.y - headLength * Math.sin(angle + Math.PI / 6)
-    );
     context.strokeStyle = 'blue';
     context.stroke();
     
