@@ -8,7 +8,7 @@ const Events = Matter.Events;
 
 
 let wwidth = 40;
-let hhigh = 135;
+let hhigh = 140;
 
 export class rocketBodies {
     constructor() {
@@ -25,7 +25,12 @@ export class rocketBodies {
             friction: 0.15
         });
     }
-    
+
+    // Method to apply force to the body
+    central_force(forceVector) {
+        Body.applyForce(this.rk, this.getBottomRightPosition(), forceVector);
+    }
+
     Body_direction(){
         const x = Math.cos(this.rk.angle);
         const y = Math.sin(this.rk.angle);
