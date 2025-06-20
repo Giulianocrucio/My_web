@@ -12,14 +12,14 @@ let hhigh = 140;
 
 export class rocketBodies {
     constructor() {
-        const x = 400; // generation point
+        const x = 400;
         const y = 50;
         const width = wwidth;
         const height = hhigh;
 
         this.rk = Bodies.rectangle(x, y, width, height, {
             render: {
-            fillStyle: 'red'
+                fillStyle: 'red'
             },
             restitution: 0.6,
             friction: 0.15,
@@ -27,31 +27,29 @@ export class rocketBodies {
         });
     }
 
-    // Method to apply force to the body
-    central_force(forceVector) {
-        Body.applyForce(this.rk, this.getBottomPosition(), forceVector);
-    }
-
-    Body_direction(){
-        const x = Math.cos(this.rk.angle);
-        const y = Math.sin(this.rk.angle);
-        return { x, y };
-    }
-
-    getBottomPosition() {
-        // Get the angle of the body
-        const angle = this.rk.angle;
-        // Get half height
-        const halfHeight = (this.rk.bounds.max.y - this.rk.bounds.min.y) / 2;
-        // Calculate the offset from the center to the bottom center
-        // Only vertical offset (downwards in local coordinates)
-        const offsetX = -halfHeight * Math.sin(angle);
-        const offsetY = halfHeight * Math.cos(angle);
-        // Return the absolute position of the bottom center
+    xyangle(angle) {
         return {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        };
+    }
+
+    central_force(forceMagnitude) {
+        const direction = this.xyangle(this.rk.angle - Math.PI / 2);
+        const halfHeight = (this.rk.bounds.max.y - this.rk.bounds.min.y) / 2;
+        const offsetX = -halfHeight * Math.sin(this.rk.angle);
+        const offsetY = halfHeight * Math.cos(this.rk.angle);
+        
+        const pos_centralF = {
             x: this.rk.position.x + offsetX,
             y: this.rk.position.y + offsetY
         };
-    }
         
+        const forceVector = {
+            x: direction.x * forceMagnitude,
+            y: direction.y * forceMagnitude
+        };
+        
+        Body.applyForce(this.rk, pos_centralF, forceVector);
+    }
 }

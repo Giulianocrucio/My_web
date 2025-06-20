@@ -155,11 +155,7 @@ document.addEventListener('keyup', (event) => {
 Events.on(engine, 'beforeUpdate', () => {
     if (keys.w && rocket) {
         const forceMagnitude = 0.01; 
-        const direction = xyangle(rocketB.angle - Math.PI / 2); 
-        rocket.central_force({
-            x: direction.x * forceMagnitude,
-            y: direction.y * forceMagnitude
-        });
+        rocket.central_force(forceMagnitude);
     }
 });
 
