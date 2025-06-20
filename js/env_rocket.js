@@ -1,4 +1,5 @@
 import { rocketBodies } from './rocket.js';
+let rocketB;
 let rocket;
 
 // Matter.js modules
@@ -66,9 +67,9 @@ function reset() {
 }
 
 function createRocket() {
-    const box = new rocketBodies();
-    rocket = box.rk;
-    World.add(world, rocket);
+    rocket = new rocketBodies();
+    rocketB = rocket.rk;
+    World.add(world, rocketB);
 }
 
 function initWorld(){
@@ -84,19 +85,19 @@ function xyangle(angl){
 
 // Function to render the direction vector
 function renderDirectionVector() {
-    if (!rocket) return;
+    if (!rocketB) return;
     
     const context = render.context;
     const center = {
-        x: rocket.position.x,
-        y: rocket.position.y
+        x: rocketB.position.x,
+        y: rocketB.position.y
     };
 
     // compute the "shift"
     const shift = Math.PI /4;
 
     // Get direction vector
-    const direction = xyangle(rocket.angle + shift);
+    const direction = xyangle(rocketB.angle + shift);
     const length = 80; // Length of the vector
     
     // Calculate end point
@@ -126,9 +127,9 @@ Events.on(render, 'afterRender', function() {
 });
 
 function logRocketAngle() {
-    if (rocket) {
-        console.log('Rocket angle:', xyangle(rocket.angle));
-        console.log('Rocket position:', { x: rocket.position.x, y: rocket.position.y });
+    if (rocketB) {
+        console.log('Rocket angle:', xyangle(rocketB.angle));
+        console.log('Rocket position:', { x: rocketB.position.x, y: rocketB.position.y });
     }
     requestAnimationFrame(logRocketAngle);
 }
@@ -149,17 +150,18 @@ logRocketAngle();
             }
         });
 
-        function w() {
-            console.log('W key pressed - move up');
-        }
+function w() {
+    console.log('W key pressed - move up');
+    rocket.central_force({ x: 0.01, y: -0.05 });
+}
 
-        function a() {
-            console.log('A key pressed - move left');
-        }
+function a() {
+    console.log('A key pressed - move left');
+}
 
-        function d() {
-            console.log('D key pressed - move right');
-        }
+function d() {
+    console.log('D key pressed - move right');
+}
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
