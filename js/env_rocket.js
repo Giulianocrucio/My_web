@@ -135,25 +135,32 @@ function logRocketAngle() {
 }
 logRocketAngle();
 
-        // Keyboard event listeners
-        document.addEventListener('keydown', function(event) {
-            switch(event.key.toLowerCase()) {
-                case 'w':
-                    w();
-                    break;
-                case 'a':
-                    a();
-                    break;
-                case 'd':
-                    d();
-                    break;
-            }
-        });
+const keys = {
+    w: false,
+    a: false,
+    d: false
+};
 
-function w() {
-    console.log('W key pressed - move up');
-    rocket.central_force({ x: 0.01, y: -0.05 });
-}
+document.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    if (key in keys) keys[key] = true;
+});
+
+document.addEventListener('keyup', (event) => {
+    const key = event.key.toLowerCase();
+    if (key in keys) keys[key] = false;
+});
+
+Events.on(engine, 'beforeUpdate', () => {
+    if (keys.w && rocket) {
+        const forceMagnitude = 0.01; 
+        const direction = xyangle(rocketB.angle - Math.PI / 2); 
+        rocket.central_force({
+            x: direction.x * forceMagnitude,
+            y: direction.y * forceMagnitude
+        });
+    }
+});
 
 function a() {
     console.log('A key pressed - move left');
