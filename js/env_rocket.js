@@ -86,7 +86,7 @@ function xyangle(angle) {
 
 // Function to render the direction vector
 // used to undersand direction and points
-function renderDirectionVector() {
+function rendercentral() {
     if (!rocketB) return;
     
     const context = render.context;
@@ -97,13 +97,13 @@ function renderDirectionVector() {
     const offsetXw = halfwidth * Math.sin(Math.PI / 2 - rocketB.angle)
     const offsetYw = halfwidth * Math.sin(rocketB.angle);
     
-    const center = rocket.right_pos();
+    const center = rocket.central_pos();
 
     // compute the "shift"
     const shift = (1*Math.PI / 2) ;
 
     // Get direction vector
-    const direction = xyangle(rocketB.angle-shift);
+    const direction = xyangle(rocketB.angle+shift);
     const length = 10; // Length of the vector
     
     // Calculate end point
@@ -125,11 +125,82 @@ function renderDirectionVector() {
     
     // Restore context state
     context.restore();
+    
+}
+function renderleft() {
+    if (!rocketB) return;
+    
+    const context = render.context;
+    const center = rocket.left_pos();
+
+    // compute the "shift"
+    const shift = (1*Math.PI / 2) ;
+
+    // Get direction vector
+    const direction = xyangle(rocketB.angle+shift);
+    const length = 10; // Length of the vector
+    
+    // Calculate end point
+    const end = {
+        x: center.x + direction.x * length,
+        y: center.y + direction.y * length
+    };
+    
+    // Save context state
+    context.save();
+    
+    // Draw the vector line
+    context.beginPath();
+    context.moveTo(center.x, center.y);
+    context.lineTo(end.x, end.y);
+    context.lineWidth = 2;
+    context.strokeStyle = 'blue';
+    context.stroke();
+    
+    // Restore context state
+    context.restore();
+    
+}
+function renderright() {
+    if (!rocketB) return;
+    
+    const context = render.context;
+    const center = rocket.right_pos();
+
+    // compute the "shift"
+    const shift = (1*Math.PI / 2) ;
+
+    // Get direction vector
+    const direction = xyangle(rocketB.angle+shift);
+    const length = 10; // Length of the vector
+    
+    // Calculate end point
+    const end = {
+        x: center.x + direction.x * length,
+        y: center.y + direction.y * length
+    };
+    
+    // Save context state
+    context.save();
+    
+    // Draw the vector line
+    context.beginPath();
+    context.moveTo(center.x, center.y);
+    context.lineTo(end.x, end.y);
+    context.lineWidth = 2;
+    context.strokeStyle = 'blue';
+    context.stroke();
+    
+    // Restore context state
+    context.restore();
+    
 }
 
 // Add the vector rendering to the afterRender event
 Events.on(render, 'afterRender', function() {
-    renderDirectionVector();
+    rendercentral();
+    renderleft();
+    renderright();
 });
 
 function logRocketAngle() {
@@ -172,13 +243,6 @@ Events.on(engine, 'beforeUpdate', () => {
     }
 });
 
-function a() {
-    console.log('A key pressed - move left');
-}
-
-function d() {
-    console.log('D key pressed - move right');
-}
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
