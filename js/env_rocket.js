@@ -12,8 +12,8 @@ const Events = Matter.Events;
 
 
 // Render options
-let WIDTH = 1200
-let HIGH = 600
+let WIDTH = 1200;
+let HIGH = 600;
 
 // Create engine
 const engine = Engine.create();
@@ -67,7 +67,7 @@ function reset() {
 }
 
 function createRocket() {
-    rocket = new rocketBodies();
+    rocket = new rocketBodies(400,20);
     rocketB = rocket.rk;
     World.add(world, rocketB);
 }
