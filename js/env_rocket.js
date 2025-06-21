@@ -97,16 +97,13 @@ function renderDirectionVector() {
     const offsetXw = halfwidth * Math.sin(Math.PI / 2 - rocketB.angle)
     const offsetYw = halfwidth * Math.sin(rocketB.angle);
     
-    const center = {
-        x: rocketB.position.x + offsetXw + offsetXh,
-        y: rocketB.position.y + offsetYw + offsetYh
-    };
+    const center = rocket.right_pos();
 
     // compute the "shift"
     const shift = (1*Math.PI / 2) ;
 
     // Get direction vector
-    const direction = xyangle(rocketB.angle+shift);
+    const direction = xyangle(rocketB.angle-shift);
     const length = 10; // Length of the vector
     
     // Calculate end point
@@ -167,11 +164,11 @@ Events.on(engine, 'beforeUpdate', () => {
     }
         if (keys.a && rocket) {
         const forceMagnitude = 0.007; 
-        rocket.right_force(forceMagnitude);
+        rocket.left_force(forceMagnitude);
     }
         if (keys.d && rocket) {
         const forceMagnitude = 0.007;; 
-        rocket.left_force(forceMagnitude);
+        rocket.right_force(forceMagnitude);
     }
 });
 
