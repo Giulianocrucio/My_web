@@ -11,9 +11,7 @@ let wwidth = 40;
 let hhigh = 140;
 
 export class rocketBodies {
-    constructor() {
-        const x = 400;
-        const y = 50;
+    constructor(x,y) {
         const width = wwidth;
         const height = hhigh;
 

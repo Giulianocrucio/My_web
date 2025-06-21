@@ -10,10 +10,9 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
 
-
 // Render options
-let WIDTH = 1200
-let HIGH = 600
+let WIDTH = 1200 ;
+let HIGH = 600 ;
 
 // Create engine
 const engine = Engine.create();
@@ -30,7 +29,7 @@ const render = Render.create({
         wireframes: false,
         background: '#16213e',
         showVelocity: true,
-        showAngleIndicator: true
+        showAngleIndicator: true,
     }
 });
 
@@ -52,7 +51,7 @@ function reset() {
 }
 
 function createRocket() {
-    rocket = new rocketBodies();
+    rocket = new rocketBodies(300, 50);
     rocketB = rocket.rk;
     World.add(world, rocketB);
 }
@@ -60,8 +59,24 @@ function createRocket() {
 function initWorld(){
     World.add(world, ground);
     createRocket();
+    const forceMagnitude = 0.1; 
+    const force = {
+        x: forceMagnitude * Math.cos(Math.PI/4), // 45 degrees right
+        y: -forceMagnitude * Math.sin(Math.PI/4)  // 45 degrees up 
+    };
+    
+    // Apply force at a RANDOM point near the center of mass
+    const maxOffset = 30; // Maximum offset distance from center
+    const offset = { 
+        x: (Math.random() * 2 - 1) * maxOffset, 
+        y: (Math.random() * 2 - 1) * maxOffset  
+    };
+    
+    Body.applyForce(rocketB, {
+        x: rocketB.position.x + offset.x,
+        y: rocketB.position.y + offset.y
+    }, force);
 }
-
 
 
 
