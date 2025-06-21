@@ -85,21 +85,29 @@ function xyangle(angle) {
 }
 
 // Function to render the direction vector
+// used to undersand direction and points
 function renderDirectionVector() {
     if (!rocketB) return;
     
     const context = render.context;
+    const halfHeight = 70;
+    const halfwidth = 20;
+    const offsetXh = -halfHeight * Math.sin(rocketB.angle);
+    const offsetYh = halfHeight * Math.cos(rocketB.angle);
+    const offsetXw = halfwidth * Math.sin(Math.PI / 2 - rocketB.angle)
+    const offsetYw = halfwidth * Math.sin(rocketB.angle);
+    
     const center = {
-        x: rocketB.position.x,
-        y: rocketB.position.y
+        x: rocketB.position.x + offsetXw + offsetXh,
+        y: rocketB.position.y + offsetYw + offsetYh
     };
 
     // compute the "shift"
-    const shift = (5*Math.PI / 6) ;
+    const shift = (1*Math.PI / 2) ;
 
     // Get direction vector
-    const direction = xyangle(rocketB.angle + shift);
-    const length = 80; // Length of the vector
+    const direction = xyangle(rocketB.angle+shift);
+    const length = 10; // Length of the vector
     
     // Calculate end point
     const end = {
@@ -129,7 +137,7 @@ Events.on(render, 'afterRender', function() {
 
 function logRocketAngle() {
     if (rocketB) {
-        console.log('Rocket angle:', xyangle(rocketB.angle));
+        console.log('Rocket angle:', (rocketB.angle));
         console.log('Rocket position:', { x: rocketB.position.x, y: rocketB.position.y });
     }
     requestAnimationFrame(logRocketAngle);
