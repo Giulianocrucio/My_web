@@ -18,7 +18,7 @@ const particles = [];
 function addParticles(x, y, direction, count = 5) {
     for (let i = 0; i < count; i++) {
         // Create particles in the specified direction
-        const spread = 0.5; // how much the particles spread
+        const spread = 0.5 + (Math.random() ); // how much the particles spread
         const speed = Math.random() * 3 + 5;
         const angle = direction + (Math.random() - 0.5) * spread;
         
