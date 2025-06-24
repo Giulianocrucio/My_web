@@ -101,3 +101,47 @@ export class rocketBodies {
         Body.applyForce(this.rk, left, forceVector);
     }
 }
+
+// Particle system
+export class Particle {
+    constructor(x, y, vx, vy, life = 60) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.life = life;
+        this.maxLife = life;
+        this.size = Math.random() * 3 + 2;
+        this.color = {
+            r: 255,
+            g: Math.random() * 100 + 100,
+            b: 0
+        };
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.98; // friction
+        this.vy *= 0.98;
+        this.vy += 0.1; // gravity
+        this.life--;
+    }
+    
+    render(context) {
+        const alpha = this.life / this.maxLife;
+        const size = this.size * alpha;
+        
+        context.save();
+        context.globalAlpha = alpha;
+        context.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+        context.beginPath();
+        context.arc(this.x, this.y, size, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+    }
+    
+    isDead() {
+        return this.life <= 0;
+    }
+}
