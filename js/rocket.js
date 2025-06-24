@@ -114,7 +114,7 @@ export class Particle {
         this.size = Math.random() * 3 + 2;
         this.color = {
             r: 255,
-            g: Math.random() * 100 + 100,
+            g: Math.random() * 255,
             b: 0
         };
     }
@@ -122,7 +122,7 @@ export class Particle {
     update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= 0.98; // friction
+        this.vx *= Math.random() * 1.5; // friction
         this.vy *= 0.98;
         this.vy += 0.1; // gravity
         this.life--;
