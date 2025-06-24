@@ -10,6 +10,86 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
 
+// Particle system
+class Particle {
+    constructor(x, y, vx, vy, life = 60) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.life = life;
+        this.maxLife = life;
+        this.size = Math.random() * 3 + 2;
+        this.color = {
+            r: 255,
+            g: Math.random() * 100 + 100,
+            b: 0
+        };
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.98; // friction
+        this.vy *= 0.98;
+        this.vy += 0.1; // gravity
+        this.life--;
+    }
+    
+    render(context) {
+        const alpha = this.life / this.maxLife;
+        const size = this.size * alpha;
+        
+        context.save();
+        context.globalAlpha = alpha;
+        context.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+        context.beginPath();
+        context.arc(this.x, this.y, size, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+    }
+    
+    isDead() {
+        return this.life <= 0;
+    }
+}
+
+// Particle system manager
+const particles = [];
+
+function addParticles(x, y, direction, count = 5) {
+    for (let i = 0; i < count; i++) {
+        // Create particles in the specified direction
+        const spread = 0.5; // how much the particles spread
+        const speed = Math.random() * 3 + 5;
+        const angle = direction + (Math.random() - 0.5) * spread;
+        
+        const particle = new Particle(
+            x + (Math.random() - 0.5) * 5, // small random offset
+            y + (Math.random() - 0.5) * 5,
+            Math.cos(angle) * speed, // in the direction specified
+            Math.sin(angle) * speed,
+            Math.random() * 30 + 30 // random lifetime
+        );
+        
+        particles.push(particle);
+    }
+}
+
+function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        if (particles[i].isDead()) {
+            particles.splice(i, 1);
+        }
+    }
+}
+
+function renderParticles(context) {
+    particles.forEach(particle => {
+        particle.render(context);
+    });
+}
 
 // Render options
 let WIDTH = 1200;
@@ -42,7 +122,6 @@ const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, {
     }
 });
 
-
 // Function to add a new box
 function addBox() {
     const x = Math.random() * 600 + 100;
@@ -58,11 +137,11 @@ function addBox() {
     World.add(world, box);
 }
 
-
 // Function to reset the simulation
 function reset() {
     World.clear(world);
     Engine.clear(engine);
+    particles.length = 0; // Clear particles
     initWorld();
 }
 
@@ -198,9 +277,13 @@ function renderright() {
 
 // Add the vector rendering to the afterRender event
 Events.on(render, 'afterRender', function() {
-    rendercentral();
-    renderleft();
-    renderright();
+    // rendercentral();
+    // renderleft();
+    // renderright();
+    
+    // Update and render particles
+    updateParticles();
+    renderParticles(render.context);
 });
 
 function logRocketAngle() {
@@ -232,17 +315,31 @@ Events.on(engine, 'beforeUpdate', () => {
     if (keys.w && rocket) {
         const forceMagnitude = 0.007; 
         rocket.central_force(forceMagnitude);
+        
+        // Add particles from central thruster
+        const center = rocket.central_pos();
+        const direction = rocketB.angle + Math.PI / 2;
+        addParticles(center.x, center.y, direction, 3);
     }
-        if (keys.a && rocket) {
+    if (keys.a && rocket) {
         const forceMagnitude = 0.007; 
         rocket.left_force(forceMagnitude);
+        
+        // Add particles from left thruster
+        const center = rocket.left_pos();
+        const direction = rocketB.angle + Math.PI / 2;
+        addParticles(center.x, center.y, direction, 2);
     }
-        if (keys.d && rocket) {
-        const forceMagnitude = 0.007;; 
+    if (keys.d && rocket) {
+        const forceMagnitude = 0.007;
         rocket.right_force(forceMagnitude);
+        
+        // Add particles from right thruster
+        const center = rocket.right_pos();
+        const direction = rocketB.angle + Math.PI / 2;
+        addParticles(center.x, center.y, direction, 2);
     }
 });
-
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);

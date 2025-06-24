@@ -19,9 +19,9 @@ export class rocketBodies {
             render: {
                 fillStyle: 'red'
             },
-            restitution: 0.6,
-            friction: 0.15,
-            angularDamping: 0.2
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
         });
     }
 
