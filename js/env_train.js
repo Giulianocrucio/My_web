@@ -13,6 +13,9 @@ const Events = Matter.Events;
 // Render options
 let WIDTH = 1200 ;
 let HIGH = 600 ;
+let zoomLevel = 1;
+const zoomStep = 0.1;
+
 
 // Create engine
 const engine = Engine.create();
@@ -78,6 +81,21 @@ function initWorld(){
     }, force);
 }
 
+document.addEventListener("keydown", (event) => {
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+
+    if (event.key === "i") {
+        zoomLevel += zoomStep;
+    } else if (event.key === "o") {
+        zoomLevel = Math.max(zoomLevel - zoomStep, 0.1); // prevent negative or zero zoom
+    }
+
+    // Apply the transform directly to the rendering context
+    if (event.key === "i" || event.key === "o") {
+        context.setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);
+    }
+});
 
 const keys = {
     i: false,
