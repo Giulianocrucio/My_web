@@ -1,4 +1,3 @@
-// rocket.js - Fixed version
 // Matter.js modules
 const Engine = Matter.Engine;
 const Render = Matter.Render;
@@ -8,11 +7,10 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let wwidth = 20;
-let hhigh = 140;
-let triangleHeight = 140;
-let trapezBottomWidth = wwidth * 1.5;
-let trapezHeight = 20;
+let topwwidth = 20;
+let wwidth = 40;
+let hhigh = 500;
+let triangleHeight = 80;
 
 export class rocketBodies {
     constructor(x, y) {
@@ -24,77 +22,37 @@ export class rocketBodies {
             render: {
                 fillStyle: 'red'
             },
-            restitution: 0.2, // Reduced from 0.4
-            friction: 0.8,    // Increased from 0.25
-            frictionStatic: 0.9, // Added static friction
-            angularDamping: 0.8  // Increased from 0.4
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
         });
 
-        // Calculate the top position of the rectangle
-        const topPos = this.top_pos();
-        
-        // Create triangle vertices for the nose cone
-        const triangleVertices = [
-            { x: -width/2, y: triangleHeight/3 },
-            { x: width/2, y: triangleHeight/3 },
-            { x: 0, y: -2*triangleHeight/3 }
+        // Create a trapezoid below the rectangle
+        const trapezoidTopWidth = topwwidth;   
+        const trapezoidBottomWidth = wwidth;  
+        const trapezoidHeight = 170;
+
+
+        // Position just below the rectangle
+        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2;
+
+        const shapeVertices = [
+            { x: -trapezoidTopWidth/2, y: triangleHeight/3 },   // bottom left of triangle
+            { x: trapezoidTopWidth/2, y: triangleHeight/3 },    // bottom right of triangle  
+            { x: 0, y: -2*triangleHeight/3 },        // top point of triangle
+            // Trapezoid  - bottom
+            { x: trapezoidBottomWidth/2, y: height/2 },
+            { x: -trapezoidBottomWidth/2, y: height/2}
         ];
 
-        this.triangle = Bodies.fromVertices(topPos.x, topPos.y - triangleHeight/3, [triangleVertices], {
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.2,
-            friction: 0.8,
-            frictionStatic: 0.9,
-            angularDamping: 0.8
-        });
-
-        // Create trapezoid with better positioning to avoid overlap
-        const trapezoidTopWidth = width;
-        const trapezoidBottomWidth = trapezBottomWidth;
-        const trapezoidHeight = trapezHeight;
-
-        const halfTop = trapezoidTopWidth / 2;
-        const halfBottom = trapezoidBottomWidth / 2;
-
-        // Position with small gap to avoid overlap
-        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2 + 2; // Added 2px gap
-
-        const trapezoidVertices = [
-            { x: -halfTop, y: -trapezoidHeight / 2 },
-            { x: halfTop, y: -trapezoidHeight / 2 },
-            { x: halfBottom, y: trapezoidHeight / 2 },
-            { x: -halfBottom, y: trapezoidHeight / 2 }
-        ];
-
-        this.trapezoid = Bodies.fromVertices(x, trapezoidCenterY, [trapezoidVertices], {
+        // Create the trapezoid from custom vertices
+        this.rk = Bodies.fromVertices(x, trapezoidCenterY, [shapeVertices], {
             render: { fillStyle: 'red' },
-            restitution: 0.2,
-            friction: 0.8,
-            frictionStatic: 0.9,
-            angularDamping: 0.8
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
         });
 
-        // Create compound body with better stability settings
-        this.compound = Body.create({
-            parts: [this.rect, this.triangle, this.trapezoid],
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.2,
-            friction: 0.8,
-            frictionStatic: 0.9,
-            angularDamping: 0.8
-        });
-
-        // Set proper slop values for all parts
-        this.compound.parts.forEach(part => {
-            part.slop = 0.05; // Reduced slop
-            part.sleepThreshold = 60; // Allow sleeping
-        });
-
-        this.rk = this.compound;
     }
 
     top_pos(){
@@ -116,8 +74,8 @@ export class rocketBodies {
     }
 
     central_pos(){
-        const offsetX = -(trapezHeight + hhigh/ 2 + 2) * Math.sin(this.rk.angle); // Added gap
-        const offsetY =  (trapezHeight + hhigh/ 2 + 2) * Math.cos(this.rk.angle);
+        const offsetX = -(hhigh/ 2) * Math.sin(this.rk.angle);
+        const offsetY =  (hhigh/ 2) * Math.cos(this.rk.angle);
         
         const pos = {
             x: this.rect.position.x + offsetX,
@@ -128,19 +86,20 @@ export class rocketBodies {
 
     right_pos(){
         const central = this.central_pos();
-        const offsetXr = (trapezBottomWidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = (trapezBottomWidth/ 2) * Math.sin(this.rk.angle);
+        const offsetXr = (wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = (wwidth/ 2) * Math.sin(this.rk.angle);
         const right = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
         };
+        console.log(right)
         return right;
     }
 
     left_pos(){
         const central = this.central_pos();
-        const offsetXr = -(trapezBottomWidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = -(trapezBottomWidth / 2) * Math.sin(this.rk.angle);
+        const offsetXr = -(wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = -(wwidth/ 2) * Math.sin(this.rk.angle);
         const left = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
@@ -185,7 +144,7 @@ export class rocketBodies {
     }
 }
 
-// Particle system remains the same
+// Particle system
 export class Particle {
     constructor(x, y, vx, vy, life = 60) {
         this.x = x;
@@ -205,9 +164,9 @@ export class Particle {
     update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= Math.random() * 1.5;
+        this.vx *= Math.random() * 1.5; // friction
         this.vy *= 0.98;
-        this.vy += 0.1;
+        this.vy += 0.1; // gravity
         this.life--;
     }
     
