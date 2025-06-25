@@ -5,17 +5,19 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
-
+const Constraint = Matter.Constraint;
 
 let wwidth = 40;
 let hhigh = 140;
+let triangleHeight = 140;
 
 export class rocketBodies {
-    constructor(x,y) {
+    constructor(x, y) {
         const width = wwidth;
         const height = hhigh;
 
-        this.rk = Bodies.rectangle(x, y, width, height, {
+        // Create the main rectangle body
+        this.rect = Bodies.rectangle(x, y, width, height, {
             render: {
                 fillStyle: 'red'
             },
@@ -23,6 +25,52 @@ export class rocketBodies {
             friction: 0.25,
             angularDamping: 0.4
         });
+
+        // Calculate the top position of the rectangle
+        const topPos = this.top_pos();
+        
+        // Create triangle vertices for the nose cone
+        // Triangle base sits at the top of the rectangle, pointing upward
+        const triangleVertices = [
+            { x: -width/2, y: triangleHeight/3 }, // bottom left of triangle
+            { x: width/2, y: triangleHeight/3 },  // bottom right of triangle  
+            { x: 0, y: -2*triangleHeight/3 } // top point of triangle
+        ];
+
+        // Create the triangle body at the top position, moved by triangleHeight/3
+        this.triangle = Bodies.fromVertices(topPos.x, topPos.y - triangleHeight/3, [triangleVertices], {
+            render: {
+                fillStyle: 'red'
+            },
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
+        });
+
+        // Create a compound body by combining rectangle and triangle
+        this.compound = Body.create({
+            parts: [this.rect, this.triangle],
+            render: {
+                fillStyle: 'red'
+            },
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
+        });
+
+        // Update reference to use the compound body
+        this.rk = this.compound;
+    }
+
+    top_pos(){
+        const offsetX = (hhigh/ 2) * Math.sin(this.rect.angle);
+        const offsetY = -(hhigh/ 2) * Math.cos(this.rect.angle);
+        
+        const pos = {
+            x: this.rect.position.x + offsetX,
+            y: this.rect.position.y + offsetY
+        };
+        return pos;
     }
 
     xyangle(angle) {
@@ -37,8 +85,8 @@ export class rocketBodies {
         const offsetY =  (hhigh/ 2) * Math.cos(this.rk.angle);
         
         const pos = {
-            x: this.rk.position.x + offsetX,
-            y: this.rk.position.y + offsetY
+            x: this.rect.position.x + offsetX,
+            y: this.rect.position.y + offsetY
         };
         return pos;
     }
@@ -89,6 +137,7 @@ export class rocketBodies {
         
         Body.applyForce(this.rk, right, forceVector);
     }
+    
     left_force(forceMagnitude) {
         const direction = this.xyangle(this.rk.angle - Math.PI / 2);
         const left = this.left_pos();
