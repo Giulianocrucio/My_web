@@ -117,6 +117,7 @@ Events.on(engine, 'beforeUpdate', () => {
         console.log("zoom out");
     }
     if (keys.i) {
+        console.log("zoom in");
     }
 });
 
