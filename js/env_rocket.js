@@ -10,7 +10,11 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
 
-
+// Render options
+let WIDTH = 1200 ;
+let HIGH = 600 ;
+let zoomLevel = 1;
+const zoomStep = 0.1;
 
 // Particle system manager
 const particles = [];
@@ -49,9 +53,6 @@ function renderParticles(context) {
     });
 }
 
-// Render options
-let WIDTH = 1200;
-let HIGH = 600;
 
 // Create engine
 const engine = Engine.create();
@@ -296,6 +297,22 @@ Events.on(engine, 'beforeUpdate', () => {
         const center = rocket.right_pos();
         const direction = rocketB.angle + Math.PI / 2;
         addParticles(center.x, center.y, direction, 2);
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+
+    if (event.key === "i") {
+        zoomLevel += zoomStep;
+    } else if (event.key === "o") {
+        zoomLevel = Math.max(zoomLevel - zoomStep, 0.1); // prevent negative or zero zoom
+    }
+
+    // Apply the transform directly to the rendering context
+    if (event.key === "i" || event.key === "o") {
+        context.setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);
     }
 });
 
