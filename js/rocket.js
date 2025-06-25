@@ -7,7 +7,7 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let wwidth = 40;
+let wwidth = 20;
 let hhigh = 140;
 let triangleHeight = 140;
 
@@ -46,10 +46,36 @@ export class rocketBodies {
             friction: 0.25,
             angularDamping: 0.4
         });
+        // Create a trapezoid below the rectangle
+        const trapezoidTopWidth = width;           // top = same as rectangle
+        const trapezoidBottomWidth = width * 1.5;  // wider bottom
+        const trapezoidHeight = 20;
+
+        const halfTop = trapezoidTopWidth / 2;
+        const halfBottom = trapezoidBottomWidth / 2;
+
+        // Position just below the rectangle
+        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2;
+
+        // Define custom vertices for the trapezoid
+        const trapezoidVertices = [
+            { x: -halfTop, y: -trapezoidHeight / 2 },   // top left (touches rectangle)
+            { x: halfTop, y: -trapezoidHeight / 2 },    // top right (touches rectangle)
+            { x: halfBottom, y: trapezoidHeight / 2 },  // bottom right (wider)
+            { x: -halfBottom, y: trapezoidHeight / 2 }  // bottom left (wider)
+        ];
+
+        // Create the trapezoid from custom vertices
+        this.trapezoid = Bodies.fromVertices(x, trapezoidCenterY, [trapezoidVertices], {
+            render: { fillStyle: 'red' },
+            restitution: 0.4,
+            friction: 0.25,
+            angularDamping: 0.4
+        });
 
         // Create a compound body by combining rectangle and triangle
         this.compound = Body.create({
-            parts: [this.rect, this.triangle],
+            parts: [this.rect, this.triangle, this.trapezoid],
             render: {
                 fillStyle: 'red'
             },
