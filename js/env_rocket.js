@@ -57,8 +57,8 @@ function renderParticles(context) {
 
 // Create engine
 const engine = Engine.create();
-engine.positionIterations = 6;
-engine.velocityIterations = 6;
+engine.positionIterations = 4; 
+engine.velocityIterations = 4;  
 engine.constraintIterations = 2;
 engine.timing.timeScale = 1;
 
