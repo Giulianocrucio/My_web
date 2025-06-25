@@ -7,10 +7,14 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let topbottomwidth = 30;
+let topwidth = 30;
 let bottomwidth = 40;
 let hhigh = 500;
 let triangleHeight = 100;
+
+
+// calculate center of mass
+let ycenter = centerofmass();
 
 export class rocketBodies {
     constructor(x, y) {
@@ -19,7 +23,7 @@ export class rocketBodies {
 
 
         // Create a trapezoid below the rectangle
-        const trapezoidTopWidth = topbottomwidth;   
+        const trapezoidTopWidth = topwidth;   
         const trapezoidBottomWidth = bottomwidth;  
         const trapezoidHeight = 170;
 
@@ -53,8 +57,8 @@ export class rocketBodies {
     }
 
     central_pos(){
-        const offsetX = -((hhigh/4)+ triangleHeight/3) * Math.sin(this.rk.angle);
-        const offsetY =  ((hhigh/4) + triangleHeight/3) * Math.cos(this.rk.angle);
+        const offsetX = -(ycenter) * Math.sin(this.rk.angle);
+        const offsetY =  (ycenter) * Math.cos(this.rk.angle);
         
         const pos = {
             x: this.rk.position.x + offsetX,
@@ -121,6 +125,18 @@ export class rocketBodies {
         
         Body.applyForce(this.rk, left, forceVector);
     }
+}
+
+function centerofmass(){
+    const a = bottomwidth;
+    const b = topwidth;
+    const ytrap = hhigh/2; // to correct
+    const masstrap = (topwidth+bottomwidth)*hhigh/2;
+
+    const ytriang = (triangleHeight/3); // to correct
+    const masstriang = topwidth*triangleHeight/2;
+
+    return ((ytrap*masstrap)+(ytriang*masstriang))/((masstrap + masstriang));
 }
 
 // Particle system
