@@ -7,34 +7,23 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let topwwidth = 20;
-let wwidth = 40;
+let topbottomwidth = 30;
+let bottomwidth = 40;
 let hhigh = 500;
-let triangleHeight = 80;
+let triangleHeight = 100;
 
 export class rocketBodies {
     constructor(x, y) {
-        const width = wwidth;
+        const width = bottomwidth;
         const height = hhigh;
 
-        // Create the main rectangle body
-        this.rect = Bodies.rectangle(x, y, width, height, {
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
-        });
 
         // Create a trapezoid below the rectangle
-        const trapezoidTopWidth = topwwidth;   
-        const trapezoidBottomWidth = wwidth;  
+        const trapezoidTopWidth = topbottomwidth;   
+        const trapezoidBottomWidth = bottomwidth;  
         const trapezoidHeight = 170;
 
 
-        // Position just below the rectangle
-        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2;
 
         const shapeVertices = [
             { x: -trapezoidTopWidth/2, y: triangleHeight/3 },   // bottom left of triangle
@@ -55,16 +44,6 @@ export class rocketBodies {
 
     }
 
-    top_pos(){
-        const offsetX = (hhigh/ 2) * Math.sin(this.rect.angle);
-        const offsetY = -(hhigh/ 2) * Math.cos(this.rect.angle);
-        
-        const pos = {
-            x: this.rect.position.x + offsetX,
-            y: this.rect.position.y + offsetY
-        };
-        return pos;
-    }
 
     xyangle(angle) {
         return {
@@ -74,20 +53,20 @@ export class rocketBodies {
     }
 
     central_pos(){
-        const offsetX = -(hhigh/ 2) * Math.sin(this.rk.angle);
-        const offsetY =  (hhigh/ 2) * Math.cos(this.rk.angle);
+        const offsetX = -((hhigh/4)+ triangleHeight/3) * Math.sin(this.rk.angle);
+        const offsetY =  ((hhigh/4) + triangleHeight/3) * Math.cos(this.rk.angle);
         
         const pos = {
-            x: this.rect.position.x + offsetX,
-            y: this.rect.position.y + offsetY
+            x: this.rk.position.x + offsetX,
+            y: this.rk.position.y + offsetY
         };
         return pos;
     }
 
     right_pos(){
         const central = this.central_pos();
-        const offsetXr = (wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = (wwidth/ 2) * Math.sin(this.rk.angle);
+        const offsetXr = (bottomwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = (bottomwidth/ 2) * Math.sin(this.rk.angle);
         const right = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
@@ -98,8 +77,8 @@ export class rocketBodies {
 
     left_pos(){
         const central = this.central_pos();
-        const offsetXr = -(wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = -(wwidth/ 2) * Math.sin(this.rk.angle);
+        const offsetXr = -(bottomwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = -(bottomwidth/ 2) * Math.sin(this.rk.angle);
         const left = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
