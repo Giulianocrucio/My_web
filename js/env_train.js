@@ -79,6 +79,28 @@ function initWorld(){
 }
 
 
+const keys = {
+    i: false,
+    o: false
+};
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    if (key in keys) keys[key] = true;
+});
+
+document.addEventListener('keyup', (event) => {
+    const key = event.key.toLowerCase();
+    if (key in keys) keys[key] = false;
+});
+
+Events.on(engine, 'beforeUpdate', () => {
+    if (keys.o) {
+        console.log("zoom out");
+    }
+    if (keys.i) {
+    }
+});
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
