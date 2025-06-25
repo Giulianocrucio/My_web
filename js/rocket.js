@@ -1,3 +1,4 @@
+// rocket.js - Fixed version
 // Matter.js modules
 const Engine = Matter.Engine;
 const Render = Matter.Render;
@@ -10,7 +11,7 @@ const Constraint = Matter.Constraint;
 let wwidth = 20;
 let hhigh = 140;
 let triangleHeight = 140;
-let trapezBottomWidth = wwidth * 1.5;  // wider bottom
+let trapezBottomWidth = wwidth * 1.5;
 let trapezHeight = 20;
 
 export class rocketBodies {
@@ -23,43 +24,43 @@ export class rocketBodies {
             render: {
                 fillStyle: 'red'
             },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
+            restitution: 0.2, // Reduced from 0.4
+            friction: 0.8,    // Increased from 0.25
+            frictionStatic: 0.9, // Added static friction
+            angularDamping: 0.8  // Increased from 0.4
         });
 
         // Calculate the top position of the rectangle
         const topPos = this.top_pos();
         
         // Create triangle vertices for the nose cone
-        // Triangle base sits at the top of the rectangle, pointing upward
         const triangleVertices = [
-            { x: -width/2, y: triangleHeight/3 }, // bottom left of triangle
-            { x: width/2, y: triangleHeight/3 },  // bottom right of triangle  
-            { x: 0, y: -2*triangleHeight/3 } // top point of triangle
+            { x: -width/2, y: triangleHeight/3 },
+            { x: width/2, y: triangleHeight/3 },
+            { x: 0, y: -2*triangleHeight/3 }
         ];
 
-        // Create the triangle body at the top position, moved by triangleHeight/3
         this.triangle = Bodies.fromVertices(topPos.x, topPos.y - triangleHeight/3, [triangleVertices], {
             render: {
                 fillStyle: 'red'
             },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
+            restitution: 0.2,
+            friction: 0.8,
+            frictionStatic: 0.9,
+            angularDamping: 0.8
         });
-        // Create a trapezoid below the rectangle
-        const trapezoidTopWidth = width;           // top = same as rectangle
-        const trapezoidBottomWidth = trapezBottomWidth;  // wider bottom
+
+        // Create trapezoid with better positioning to avoid overlap
+        const trapezoidTopWidth = width;
+        const trapezoidBottomWidth = trapezBottomWidth;
         const trapezoidHeight = trapezHeight;
 
         const halfTop = trapezoidTopWidth / 2;
         const halfBottom = trapezoidBottomWidth / 2;
 
-        // Position just below the rectangle
-        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2;
+        // Position with small gap to avoid overlap
+        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2 + 2; // Added 2px gap
 
-        // Define custom vertices for the trapezoid
         const trapezoidVertices = [
             { x: -halfTop, y: -trapezoidHeight / 2 },
             { x: halfTop, y: -trapezoidHeight / 2 },
@@ -67,26 +68,32 @@ export class rocketBodies {
             { x: -halfBottom, y: trapezoidHeight / 2 }
         ];
 
-        // Create the trapezoid from custom vertices
         this.trapezoid = Bodies.fromVertices(x, trapezoidCenterY, [trapezoidVertices], {
             render: { fillStyle: 'red' },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
+            restitution: 0.2,
+            friction: 0.8,
+            frictionStatic: 0.9,
+            angularDamping: 0.8
         });
 
-        // Create a compound body by combining rectangle and triangle
+        // Create compound body with better stability settings
         this.compound = Body.create({
             parts: [this.rect, this.triangle, this.trapezoid],
             render: {
                 fillStyle: 'red'
             },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
+            restitution: 0.2,
+            friction: 0.8,
+            frictionStatic: 0.9,
+            angularDamping: 0.8
         });
 
-        // Update reference to use the compound body
+        // Set proper slop values for all parts
+        this.compound.parts.forEach(part => {
+            part.slop = 0.05; // Reduced slop
+            part.sleepThreshold = 60; // Allow sleeping
+        });
+
         this.rk = this.compound;
     }
 
@@ -109,8 +116,8 @@ export class rocketBodies {
     }
 
     central_pos(){
-        const offsetX = -(trapezHeight + hhigh/ 2) * Math.sin(this.rk.angle);
-        const offsetY =  (trapezHeight + hhigh/ 2) * Math.cos(this.rk.angle);
+        const offsetX = -(trapezHeight + hhigh/ 2 + 2) * Math.sin(this.rk.angle); // Added gap
+        const offsetY =  (trapezHeight + hhigh/ 2 + 2) * Math.cos(this.rk.angle);
         
         const pos = {
             x: this.rect.position.x + offsetX,
@@ -127,7 +134,6 @@ export class rocketBodies {
             x: central.x + offsetXr,
             y: central.y + offsetYr
         };
-        console.log(right)
         return right;
     }
 
@@ -179,7 +185,7 @@ export class rocketBodies {
     }
 }
 
-// Particle system
+// Particle system remains the same
 export class Particle {
     constructor(x, y, vx, vy, life = 60) {
         this.x = x;
@@ -199,9 +205,9 @@ export class Particle {
     update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= Math.random() * 1.5; // friction
+        this.vx *= Math.random() * 1.5;
         this.vy *= 0.98;
-        this.vy += 0.1; // gravity
+        this.vy += 0.1;
         this.life--;
     }
     
