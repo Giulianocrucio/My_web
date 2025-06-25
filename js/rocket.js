@@ -39,14 +39,14 @@ export class rocketBodies {
         const shapeVertices = [
             { x: -trapezoidTopWidth/2, y: triangleHeight/3 },   // bottom left of triangle
             { x: trapezoidTopWidth/2, y: triangleHeight/3 },    // bottom right of triangle  
-            { x: 0, y: -2*triangleHeight/3 },        // top point of triangle
+            { x: 0, y: -2*triangleHeight/3 },                   // top point of triangle
             // Trapezoid  - bottom
             { x: trapezoidBottomWidth/2, y: height/2 },
             { x: -trapezoidBottomWidth/2, y: height/2}
         ];
 
         // Create the trapezoid from custom vertices
-        this.rk = Bodies.fromVertices(x, trapezoidCenterY, [shapeVertices], {
+        this.rk = Bodies.fromVertices(x, y, [shapeVertices], {
             render: { fillStyle: 'red' },
             restitution: 0.4,
             friction: 0.25,
