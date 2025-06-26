@@ -7,97 +7,47 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let wwidth = 20;
-let hhigh = 140;
-let triangleHeight = 140;
+let topwidth = 20;
+let bottomwidth = 40;
+let hhigh = 200;
+let triangleHeight = 60;
+
+
+// calculate center of mass
+let ycenter = centerofmass();
 
 export class rocketBodies {
     constructor(x, y) {
-        const width = wwidth;
+        const width = bottomwidth;
         const height = hhigh;
 
-        // Create the main rectangle body
-        this.rect = Bodies.rectangle(x, y, width, height, {
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
-        });
 
-        // Calculate the top position of the rectangle
-        const topPos = this.top_pos();
-        
-        // Create triangle vertices for the nose cone
-        // Triangle base sits at the top of the rectangle, pointing upward
-        const triangleVertices = [
-            { x: -width/2, y: triangleHeight/3 }, // bottom left of triangle
-            { x: width/2, y: triangleHeight/3 },  // bottom right of triangle  
-            { x: 0, y: -2*triangleHeight/3 } // top point of triangle
-        ];
-
-        // Create the triangle body at the top position, moved by triangleHeight/3
-        this.triangle = Bodies.fromVertices(topPos.x, topPos.y - triangleHeight/3, [triangleVertices], {
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
-        });
         // Create a trapezoid below the rectangle
-        const trapezoidTopWidth = width;           // top = same as rectangle
-        const trapezoidBottomWidth = width * 1.5;  // wider bottom
-        const trapezoidHeight = 20;
+        const trapezoidTopWidth = topwidth;   
+        const trapezoidBottomWidth = bottomwidth;  
+        const trapezoidHeight = 170;
 
-        const halfTop = trapezoidTopWidth / 2;
-        const halfBottom = trapezoidBottomWidth / 2;
 
-        // Position just below the rectangle
-        const trapezoidCenterY = y + height / 2 + trapezoidHeight / 2;
 
-        // Define custom vertices for the trapezoid
-        const trapezoidVertices = [
-            { x: -halfTop, y: -trapezoidHeight / 2 },   // top left (touches rectangle)
-            { x: halfTop, y: -trapezoidHeight / 2 },    // top right (touches rectangle)
-            { x: halfBottom, y: trapezoidHeight / 2 },  // bottom right (wider)
-            { x: -halfBottom, y: trapezoidHeight / 2 }  // bottom left (wider)
+        const shapeVertices = [
+            { x: -trapezoidTopWidth/2, y: 0 },   // bottom left of triangle
+            { x: trapezoidTopWidth/2, y: 0 },    // bottom right of triangle  
+            { x: 0, y: -triangleHeight },        // top point of triangle
+            // Trapezoid  - bottom
+            { x: trapezoidBottomWidth/2, y: height },
+            { x: -trapezoidBottomWidth/2, y: height}
         ];
 
         // Create the trapezoid from custom vertices
-        this.trapezoid = Bodies.fromVertices(x, trapezoidCenterY, [trapezoidVertices], {
+        this.rk = Bodies.fromVertices(x, y, [shapeVertices], {
             render: { fillStyle: 'red' },
             restitution: 0.4,
             friction: 0.25,
             angularDamping: 0.4
         });
 
-        // Create a compound body by combining rectangle and triangle
-        this.compound = Body.create({
-            parts: [this.rect, this.triangle, this.trapezoid],
-            render: {
-                fillStyle: 'red'
-            },
-            restitution: 0.4,
-            friction: 0.25,
-            angularDamping: 0.4
-        });
-
-        // Update reference to use the compound body
-        this.rk = this.compound;
     }
 
-    top_pos(){
-        const offsetX = (hhigh/ 2) * Math.sin(this.rect.angle);
-        const offsetY = -(hhigh/ 2) * Math.cos(this.rect.angle);
-        
-        const pos = {
-            x: this.rect.position.x + offsetX,
-            y: this.rect.position.y + offsetY
-        };
-        return pos;
-    }
 
     xyangle(angle) {
         return {
@@ -107,20 +57,20 @@ export class rocketBodies {
     }
 
     central_pos(){
-        const offsetX = -(hhigh/ 2) * Math.sin(this.rk.angle);
-        const offsetY =  (hhigh/ 2) * Math.cos(this.rk.angle);
+        const offsetX = -(ycenter) * Math.sin(this.rk.angle);
+        const offsetY =  (ycenter) * Math.cos(this.rk.angle);
         
         const pos = {
-            x: this.rect.position.x + offsetX,
-            y: this.rect.position.y + offsetY
+            x: this.rk.position.x + offsetX,
+            y: this.rk.position.y + offsetY
         };
         return pos;
     }
 
     right_pos(){
         const central = this.central_pos();
-        const offsetXr = (wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = (wwidth/ 2) * Math.sin(this.rk.angle);
+        const offsetXr = (bottomwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = (bottomwidth/ 2) * Math.sin(this.rk.angle);
         const right = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
@@ -131,8 +81,8 @@ export class rocketBodies {
 
     left_pos(){
         const central = this.central_pos();
-        const offsetXr = -(wwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
-        const offsetYr = -(wwidth/ 2) * Math.sin(this.rk.angle);
+        const offsetXr = -(bottomwidth / 2) * Math.sin(Math.PI / 2 - this.rk.angle);
+        const offsetYr = -(bottomwidth/ 2) * Math.sin(this.rk.angle);
         const left = {
             x: central.x + offsetXr,
             y: central.y + offsetYr
@@ -175,6 +125,19 @@ export class rocketBodies {
         
         Body.applyForce(this.rk, left, forceVector);
     }
+}
+
+function centerofmass(){
+
+    const b = bottomwidth;
+    const a = topwidth;
+    const ytrap = (((2*a)+b)/(a+b))*hhigh/3; 
+    const masstrap = (a+b)*hhigh/2;
+
+    const ytriang = hhigh + (triangleHeight/3);
+    const masstriang = a*triangleHeight/2;
+
+    return ((ytrap*masstrap)+(ytriang*masstriang))/((masstrap + masstriang));
 }
 
 // Particle system
