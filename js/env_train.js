@@ -1,4 +1,23 @@
 import { rocketBodies } from './rocket.js';
+
+///////////////////////////////////
+// CHECK
+///////////////////////////////////
+// In env_train.js
+import { NeuralNetwork } from './BrainRocket.js';
+
+// Check if tf is available globally
+if (typeof tf === 'undefined') {
+    console.error('TensorFlow.js not loaded! Make sure to include the script before this module.');
+} else {
+    console.log('TensorFlow.js version:', tf.version.tfjs);
+    
+    // Your code here
+    const nn = new NeuralNetwork();
+    nn.createModel();
+    // etc...
+}
+
 let rocketB;
 let rocket;
 
