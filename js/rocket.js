@@ -7,9 +7,9 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let topwidth = 30;
-let bottomwidth = 40;
-let hhigh = 500;
+let topwidth = 100;
+let bottomwidth = 100;
+let hhigh = 100;
 let triangleHeight = 100;
 
 
@@ -128,13 +128,14 @@ export class rocketBodies {
 }
 
 function centerofmass(){
-    const a = bottomwidth;
-    const b = topwidth;
-    const ytrap = hhigh/2; // to correct
-    const masstrap = (topwidth+bottomwidth)*hhigh/2;
 
-    const ytriang = (triangleHeight/3); // to correct
-    const masstriang = topwidth*triangleHeight/2;
+    const b = bottomwidth;
+    const a = topwidth;
+    const ytrap = (((2*a)+b)/(a+b))*hhigh/3; 
+    const masstrap = (a+b)*hhigh/2;
+
+    const ytriang = hhigh + (triangleHeight/3);
+    const masstriang = a*triangleHeight/2;
 
     return ((ytrap*masstrap)+(ytriang*masstriang))/((masstrap + masstriang));
 }
