@@ -7,10 +7,10 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint;
 
-let topwidth = 100;
-let bottomwidth = 100;
-let hhigh = 100;
-let triangleHeight = 100;
+let topwidth = 20;
+let bottomwidth = 40;
+let hhigh = 200;
+let triangleHeight = 60;
 
 
 // calculate center of mass
@@ -30,12 +30,12 @@ export class rocketBodies {
 
 
         const shapeVertices = [
-            { x: -trapezoidTopWidth/2, y: triangleHeight/3 },   // bottom left of triangle
-            { x: trapezoidTopWidth/2, y: triangleHeight/3 },    // bottom right of triangle  
-            { x: 0, y: -2*triangleHeight/3 },                   // top point of triangle
+            { x: -trapezoidTopWidth/2, y: 0 },   // bottom left of triangle
+            { x: trapezoidTopWidth/2, y: 0 },    // bottom right of triangle  
+            { x: 0, y: -triangleHeight },        // top point of triangle
             // Trapezoid  - bottom
-            { x: trapezoidBottomWidth/2, y: height/2 },
-            { x: -trapezoidBottomWidth/2, y: height/2}
+            { x: trapezoidBottomWidth/2, y: height },
+            { x: -trapezoidBottomWidth/2, y: height}
         ];
 
         // Create the trapezoid from custom vertices
