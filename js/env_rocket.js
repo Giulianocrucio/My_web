@@ -19,6 +19,7 @@ const zoomStep = 0.1;
 // Particle system manager
 const particles = [];
 
+
 function addParticles(x, y, direction, count = 5) {
     for (let i = 0; i < count; i++) {
         // Create particles in the specified direction
@@ -56,6 +57,7 @@ function renderParticles(context) {
 
 // Create engine
 const engine = Engine.create();
+
 const world = engine.world;
 
 // Create renderer
@@ -105,10 +107,17 @@ function reset() {
 }
 
 function createRocket() {
-    rocket = new rocketBodies(400,20);
+    rocket = new rocketBodies(400, 20);
     rocketB = rocket.rk;
+
+    // Set slop on all rocket parts
+    rocketB.parts.forEach(part => {
+        part.slop = 0.1;
+    });
+
     World.add(world, rocketB);
 }
+
 
 function initWorld(){
     World.add(world, ground);
