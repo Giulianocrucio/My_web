@@ -1,9 +1,8 @@
-/*
 
-*/
 
 // Neural Network: 5 inputs -> 2 hidden layers (64 neurons each, ReLU) -> 3 outputs [0,1]
-// Requires TensorFlow.js to be loaded globally
+// 5 input: a tf.isTensor(inputData)
+// inputData: anglex, angley, angularvelocity, positionx, positionty
 
 export class NeuralNetwork {
     constructor() {
@@ -48,50 +47,36 @@ export class NeuralNetwork {
 
 
     // Make predictions
-    predict(inputData) {
+    predict(inputTensor) {
         if (!this.model || !this.isCompiled) {
             throw new Error('Model must be created and compiled before prediction');
         }
 
-        let inputTensor;
-        let shouldDispose = true;
-
-        // Handle different input formats
-        if (tf.isTensor(inputData)) {
-            inputTensor = inputData;
-            shouldDispose = false;
-        } else if (Array.isArray(inputData)) {
-            if (inputData.length === 5 && typeof inputData[0] === 'number') {
-                // Single prediction: [1, 2, 3, 4, 5]
-                inputTensor = tf.tensor2d([inputData]);
-            } else {
-                // Batch prediction: [[1,2,3,4,5], [6,7,8,9,10]]
-                inputTensor = tf.tensor2d(inputData);
-            }
-        } else {
-            throw new Error('Input must be an array or tensor');
-        }
-
+        // Direct prediction with the tensor - no type checking needed
         const prediction = this.model.predict(inputTensor);
         const result = prediction.dataSync();
-
-        // Clean up tensors
-        if (shouldDispose) inputTensor.dispose();
+        
+        // Clean up the prediction tensor
         prediction.dispose();
-
-        // Return as array of arrays for batch predictions, or single array for single prediction
-        if (inputData.length === 5 && typeof inputData[0] === 'number') {
-            return Array.from(result);
-        } else {
-            const batchSize = inputTensor.shape[0];
-            const results = [];
-            for (let i = 0; i < batchSize; i++) {
-                results.push(Array.from(result.slice(i * 3, (i + 1) * 3)));
-            }
-            return results;
-        }
+        
+        // Return as simple array [output1, output2, output3]
+        return Array.from(result);
     }
 
+    compileModel() {
+        if (!this.model) {
+            throw new Error('Model must be created before compilation');
+        }
+        
+        this.model.compile({
+            optimizer: 'adam',
+            loss: 'meanSquaredError',
+            metrics: ['accuracy']
+        });
+        
+        this.isCompiled = true;
+        return this;
+    }
 
 
     // Get model info
