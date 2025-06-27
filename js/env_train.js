@@ -14,6 +14,11 @@ if (typeof tf === 'undefined') {
     nn.createModel();
 }
 
+
+let brain = new NeuralNetwork();
+brain.createModel();
+brain.compileModel();
+
 let rocketB;
 let rocket;
 
@@ -134,6 +139,19 @@ Events.on(engine, 'beforeUpdate', () => {
     if (keys.i) {
         console.log("zoom in");
     }
+
+
+    //////////////
+    // test brain
+    //////////////
+    const forceMagnitude = 0.005;
+    const pre = brain.predict(rocket.getinput());
+
+    rocket.central_force(pre[0]*forceMagnitude);  // Use first output for central force
+    rocket.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
+    rocket.right_force(pre[2]*forceMagnitude);    // Use third output for right force
+
+    console.log(pre[1]);
 });
 
 const runner = Matter.Runner.create();
@@ -146,4 +164,4 @@ Render.run(render);
 engine.world.gravity.y = 1;
 
 initWorld();
-window.reset = reset;
+window.reset = reset();

@@ -1,3 +1,4 @@
+import { NeuralNetwork } from './BrainRocket.js';
 // Matter.js modules
 const Engine = Matter.Engine;
 const Render = Matter.Render;
@@ -124,6 +125,31 @@ export class rocketBodies {
         };
         
         Body.applyForce(this.rk, left, forceVector);
+    }
+
+    getinput(){
+    const groundY = 600; // or whatever Y coordinate represents your ground
+
+    // Extract information from the Matter.js body
+    const angle = this.rk.angle;
+    const angularVelocity = this.rk.angularVelocity;
+    const posX = 0;
+    const posY = this.rk.position.y;
+
+    // Calculate derived values
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+    const distanceFromGround = groundY - posY; // positive when above ground
+
+    // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
+    const bodyTensor = tf.tensor2d([[
+        cosAngle,
+        sinAngle,
+        angularVelocity,
+        posX,
+        distanceFromGround
+    ]], [1, 5]); // shape: [1, 5] - batch size 1, 5 features
+    return bodyTensor;
     }
 }
 
