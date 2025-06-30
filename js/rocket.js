@@ -20,12 +20,14 @@ let ycenter = centerofmass();
 
 export class rocketBodies {
     constructor(x, y) {
+        // to think
         this.brain;
+        this.distanceGround = 300;
+
+        // Create a trapezoid below the rectangle
         const width = bottomwidth;
         const height = hhigh;
 
-
-        // Create a trapezoid below the rectangle
         const trapezoidTopWidth = topwidth;   
         const trapezoidBottomWidth = bottomwidth;  
         const trapezoidHeight = 170;
@@ -129,8 +131,11 @@ export class rocketBodies {
         Body.applyForce(this.rk, left, forceVector);
     }
 
+    setHigh(x){
+        this.distanceGround = x;
+    }
+
     getinput(){
-        const groundY = 600; // or whatever Y coordinate represents your ground
 
         // Extract information from the Matter.js body
         const angle = this.rk.angle;
@@ -141,7 +146,7 @@ export class rocketBodies {
         // Calculate derived values
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
-        const distanceFromGround = groundY - posY; // positive when above ground
+        const distanceFromGround = this.distanceGround - posY; // positive when above ground
 
         // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
         const bodyTensor = tf.tensor2d([[

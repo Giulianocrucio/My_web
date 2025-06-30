@@ -1,18 +1,5 @@
 import { rocketBodies } from './rocket.js';
-
-///////////////////////////////////
-// CHECK if tf works
-///////////////////////////////////
 import { NeuralNetwork } from './BrainRocket.js';
-
-// Check if tf is available globally
-if (typeof tf === 'undefined') {
-    console.error('TensorFlow.js not loaded!');
-} else {
-    console.log('TensorFlow.js version:', tf.version.tfjs);
-    const nn = new NeuralNetwork();
-    nn.createModel();
-}
 
 
 let brain = new NeuralNetwork();
