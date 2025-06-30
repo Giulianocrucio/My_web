@@ -29,7 +29,7 @@ const zoomStep = 0.1;
 let n_rocket = 10;
 let rockets = [];
 let distanceFromRockets = 1000;
-let FromRocketToGround = 2000;
+let FromRocketToGround = 2500;
 
 // Create engine
 const engine = Engine.create({
@@ -68,7 +68,7 @@ const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, {
 
 function createGrounds(){
     for(let i = 0; i < n_rocket; i++){
-    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , 200 , 40, { 
+    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , 400 , 40, { 
         isStatic: true,
         render: {
             fillStyle: '#4a4a6a'

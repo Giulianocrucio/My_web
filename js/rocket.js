@@ -153,7 +153,7 @@ export class rocketBodies {
         // Calculate derived values
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
-        const distanceFromGround = this.distanceGround - posY; // positive when above ground
+        const distanceFromGround = this.distanceGround - posY - ycenter; // positive when above ground
 
         // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
         const bodyTensor = tf.tensor2d([[
