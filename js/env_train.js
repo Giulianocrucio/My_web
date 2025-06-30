@@ -39,6 +39,7 @@ const zoomStep = 0.1;
 
 // Create engine
 const engine = Engine.create();
+engine.timing.timeScale = 1;
 const world = engine.world;
 
 // Create renderer
@@ -76,6 +77,7 @@ function reset() {
 function createRocket() {
     rocket = new rocketBodies(300, 50);
     rocketB = rocket.rk;
+    rocket.inizialiazeBrain();
     World.add(world, rocketB);
 }
 
@@ -144,14 +146,17 @@ Events.on(engine, 'beforeUpdate', () => {
     //////////////
     // test brain
     //////////////
+    /*
     const forceMagnitude = 0.005;
     const pre = brain.predict(rocket.getinput());
 
     rocket.central_force(pre[0]*forceMagnitude);  // Use first output for central force
-    rocket.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
-    rocket.right_force(pre[2]*forceMagnitude);    // Use third output for right force
+    //rocket.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
+    //rocket.right_force(pre[2]*forceMagnitude);    // Use third output for right force
 
     console.log(pre[1]);
+    */
+   rocket.think();
 });
 
 const runner = Matter.Runner.create();

@@ -13,12 +13,14 @@ let bottomwidth = 40;
 let hhigh = 200;
 let triangleHeight = 60;
 
+let forceMagnitude = 0.005;
 
 // calculate center of mass
 let ycenter = centerofmass();
 
 export class rocketBodies {
     constructor(x, y) {
+        this.brain;
         const width = bottomwidth;
         const height = hhigh;
 
@@ -128,28 +130,47 @@ export class rocketBodies {
     }
 
     getinput(){
-    const groundY = 600; // or whatever Y coordinate represents your ground
+        const groundY = 600; // or whatever Y coordinate represents your ground
 
-    // Extract information from the Matter.js body
-    const angle = this.rk.angle;
-    const angularVelocity = this.rk.angularVelocity;
-    const posX = 0;
-    const posY = this.rk.position.y;
+        // Extract information from the Matter.js body
+        const angle = this.rk.angle;
+        const angularVelocity = this.rk.angularVelocity;
+        const posX = 0;
+        const posY = this.rk.position.y;
 
-    // Calculate derived values
-    const cosAngle = Math.cos(angle);
-    const sinAngle = Math.sin(angle);
-    const distanceFromGround = groundY - posY; // positive when above ground
+        // Calculate derived values
+        const cosAngle = Math.cos(angle);
+        const sinAngle = Math.sin(angle);
+        const distanceFromGround = groundY - posY; // positive when above ground
 
-    // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
-    const bodyTensor = tf.tensor2d([[
-        cosAngle,
-        sinAngle,
-        angularVelocity,
-        posX,
-        distanceFromGround
-    ]], [1, 5]); // shape: [1, 5] - batch size 1, 5 features
-    return bodyTensor;
+        // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
+        const bodyTensor = tf.tensor2d([[
+            cosAngle,
+            sinAngle,
+            angularVelocity,
+            posX,
+            distanceFromGround
+        ]], [1, 5]); // shape: [1, 5] - batch size 1, 5 features
+        return bodyTensor;
+    }
+
+    inizialiazeBrain(){
+        this.brain = new NeuralNetwork();
+        this.brain.createModel();
+        this.brain.compileModel();
+    }
+
+    loadmodel(){
+        // to do
+    }
+
+    think(){
+
+        const pre = this.brain.predict(this.getinput());
+
+        this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
+        this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
+        this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
     }
 }
 
