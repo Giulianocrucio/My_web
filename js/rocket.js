@@ -43,14 +43,22 @@ export class rocketBodies {
             { x: -trapezoidBottomWidth/2, y: height}
         ];
 
-        // Create the trapezoid from custom vertices
-        this.rk = Bodies.fromVertices(x, y, [shapeVertices], {
+        // optimize collision
+        const collisionOptions = {
+            collisionFilter: {
+                group: -1,  // Negative group prevents self-collisions
+                category: 2, // Category bitmask
+                mask: 1     // Explicitly define what it collides with
+            },
             render: { fillStyle: 'red' },
-            restitution: 0.4,
+            chamfer: { radius: 5 },
+            slop: 0.05,     // Helps with collision stability
             friction: 0.25,
-            angularDamping: 0.4
-        });
+            restitution: 0.4
+        };
 
+        // Create the trapezoid from custom vertices
+        this.rk = Bodies.fromVertices(x, y, [shapeVertices], collisionOptions, true);
     }
 
 

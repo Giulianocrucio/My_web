@@ -26,7 +26,7 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 30;
+let n_rocket = 10;
 let rockets = [];
 let distanceFromRockets = 1000;
 let FromRocketToGround = 2000;
@@ -98,7 +98,8 @@ function createRockets() {
     rockets = []; 
     for (let i = 0; i < n_rocket; i++) {
         const rocket = new rocketBodies(300 + (distanceFromRockets * i), 50);  
-        rocket.initializeBrain();  
+        rocket.initializeBrain();
+        rocket.setHigh(distanceFromRockets);  
         Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         World.add(world, rocket.rk);
         rockets.push(rocket);
