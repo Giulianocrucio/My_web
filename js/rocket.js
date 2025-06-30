@@ -80,7 +80,6 @@ export class rocketBodies {
             x: central.x + offsetXr,
             y: central.y + offsetYr
         };
-        console.log(right)
         return right;
     }
 
@@ -159,7 +158,7 @@ export class rocketBodies {
         return bodyTensor;
     }
 
-    inizialiazeBrain(){
+    initializeBrain(){
         this.brain = new NeuralNetwork();
         this.brain.createModel();
         this.brain.compileModel();

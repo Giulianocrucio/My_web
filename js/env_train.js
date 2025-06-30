@@ -17,15 +17,25 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
 
+
+
 // Render options
 let WIDTH = 1200 ;
 let HIGH = 600 ;
-let zoomLevel = 1;
+let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
+// rockets options
+let n_rocket = 30;
+let rockets = [];
+let distanceFromRockets = 1000;
+let FromRocketToGround = 2000;
 
 // Create engine
-const engine = Engine.create();
+const engine = Engine.create({
+    positionIterations: 6, 
+    velocityIterations: 4  
+});
 engine.timing.timeScale = 1;
 const world = engine.world;
 
@@ -41,6 +51,10 @@ const render = Render.create({
         background: '#16213e',
         showVelocity: true,
         showAngleIndicator: true,
+        showVelocity: false,      // Disable for performance
+        showAngleIndicator: false,// Disable for performance
+        showCollisions: false,    // Disable collision highlights
+        showBounds: false         // Disable bounds visualization
     }
 });
 
@@ -52,6 +66,18 @@ const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, {
     }
 });
 
+function createGrounds(){
+    for(let i = 0; i < n_rocket; i++){
+    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , 200 , 40, { 
+        isStatic: true,
+        render: {
+            fillStyle: '#4a4a6a'
+            }
+        });
+    World.add(world, ground);
+    }
+}
+
 
 
 // Function to reset the simulation
@@ -62,32 +88,26 @@ function reset() {
 }
 
 function createRocket() {
-    rocket = new rocketBodies(300, 50);
+    rocket = new rocketBodies(2000, 50);
     rocketB = rocket.rk;
-    rocket.inizialiazeBrain();
+    rocket.initializeBrain();
     World.add(world, rocketB);
 }
 
+function createRockets() {
+    rockets = []; 
+    for (let i = 0; i < n_rocket; i++) {
+        const rocket = new rocketBodies(300 + (distanceFromRockets * i), 50);  
+        rocket.initializeBrain();  
+        Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        World.add(world, rocket.rk);
+        rockets.push(rocket);
+    }
+}
+
 function initWorld(){
-    World.add(world, ground);
-    createRocket();
-    const forceMagnitude = 0.1; 
-    const force = {
-        x: forceMagnitude * Math.cos(Math.PI/4), // 45 degrees right
-        y: -forceMagnitude * Math.sin(Math.PI/4)  // 45 degrees up 
-    };
-    
-    // Apply force at a RANDOM point near the center of mass
-    const maxOffset = 30; // Maximum offset distance from center
-    const offset = { 
-        x: (Math.random() * 2 - 1) * maxOffset, 
-        y: (Math.random() * 2 - 1) * maxOffset  
-    };
-    
-    Body.applyForce(rocketB, {
-        x: rocketB.position.x + offset.x,
-        y: rocketB.position.y + offset.y
-    }, force);
+    createGrounds();
+    createRockets();
 }
 
 document.addEventListener("keydown", (event) => {
@@ -143,8 +163,16 @@ Events.on(engine, 'beforeUpdate', () => {
 
     console.log(pre[1]);
     */
-   rocket.think();
+
+
+   //rocket.think();
+   for(let i = 0; i < n_rocket; i++){
+    rockets[i].think();
+   }
+
 });
+
+canvas.getContext("2d").setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);;
 
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
@@ -156,4 +184,3 @@ Render.run(render);
 engine.world.gravity.y = 1;
 
 initWorld();
-window.reset = reset();
