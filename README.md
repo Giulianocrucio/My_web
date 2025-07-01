@@ -18,10 +18,9 @@ Maybe this dual approach saves me some training time, even if it loses a bit of 
 
 pseudocode exemple:
 
-function stabilizer(){  
-    angle = rocket's direction  
-    ang_vel = rocket's angular velocity  
-
-    left_force and central_force scaled in some way based on  
-    the rocket's angular velocity and direction  
-}  
+    function stabilizer(){  
+        angle = rocket's direction  
+        ang_vel = rocket's angular velocity  
+        left_force and central_force scaled in some way based on  
+        the rocket's angular velocity and direction  
+    }  
