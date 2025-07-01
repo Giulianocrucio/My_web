@@ -21,15 +21,19 @@ const Events = Matter.Events;
 
 // Render options
 let WIDTH = 1200 ;
-let HIGH = 600 ;
+let HIGH = 550 ;
 let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 10;
+let n_rocket = 20;
 let rockets = [];
 let distanceFromRockets = 1000;
 let FromRocketToGround = 2500;
+
+// timer options
+let timer_duration = 5; // in seconds
+let n_gen = 1;
 
 // Create engine
 const engine = Engine.create({
@@ -173,6 +177,8 @@ Events.on(engine, 'beforeUpdate', () => {
 
 });
 
+document.getElementById("n_rocket").textContent = `Number of rockets in the simulation: ${n_rocket}`;
+document.getElementById("n_gen").textContent = `Generation number: ${n_gen}`;
 canvas.getContext("2d").setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);;
 
 const runner = Matter.Runner.create();
@@ -184,4 +190,21 @@ Render.run(render);
 // Add some gravity variation for fun
 engine.world.gravity.y = 1;
 
+timer_duration = timer_duration*1000;
 initWorld();
+const timer = setInterval(() => {
+        /*
+        get evaluation of performance
+
+        mix the best models
+            create n_rocket models
+
+        load the new brains in the rockets
+
+        restart the simulation
+
+        */
+        n_gen = n_gen + 1;
+        document.getElementById("n_gen").textContent = `Generation number: ${n_gen}`;
+        console.log("hello");
+    }, timer_duration); 

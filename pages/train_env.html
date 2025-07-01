@@ -67,14 +67,23 @@
             font-size: 14px;
             color: #aaa;
         }
+        .top-right {
+            position: fixed; /* or 'absolute' */ 
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
+    <div class="top-right" id="n_gen" ></div>
     <div class="key-info">Use I, O keys to contorl the zoom</div>
     <div class="key-info">Ctrl + R to restart the simulation</div>
     <canvas id="canvas" width="1200" height="800"></canvas>
     
     <script type="module" src="../js/env_train.js"></script>
+    <div class="key-info" id="n_rocket"></div>
     
 </body>
 </html>

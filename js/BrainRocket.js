@@ -92,13 +92,25 @@ export class NeuralNetwork {
         };
     }
 
+    /*
     // Save model
-    async saveModel(savePath = '..\data\local_data\models') {
+    async saveModel(savePath = '../data/local_data/models') {
         if (!this.model) {
             throw new Error('No model to save');
         }
         await this.model.save(savePath);
         console.log(`Model saved to ${savePath}`);
+    }
+    */
+
+    async saveModel(modelName = 'model', savePath = '../data/local_data/models' ) {
+        if (!this.model) {
+            throw new Error('No model to save');
+        }
+        
+        const fullPath = `${savePath}/${modelName}`;
+        await this.model.save(`${fullPath}`);
+        console.log(`Model saved to ${fullPath}`);
     }
 
     // Load model
