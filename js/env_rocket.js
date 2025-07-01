@@ -13,7 +13,7 @@ const Events = Matter.Events;
 // Render options
 let WIDTH = 1200 ;
 let HIGH = 600 ;
-let zoomLevel = 1;
+let zoomLevel = 0.5;
 const zoomStep = 0.1;
 
 // Particle system manager
@@ -76,7 +76,7 @@ const render = Render.create({
 });
 
 // Create ground
-const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, { 
+const ground = Bodies.rectangle(500 + WIDTH / 2, HIGH + 500, 2000, 40, { 
     isStatic: true,
     render: {
         fillStyle: '#4a4a6a'
@@ -325,6 +325,7 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+canvas.getContext("2d").setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
 
