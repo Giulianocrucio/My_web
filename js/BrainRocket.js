@@ -133,6 +133,5 @@ export class NeuralNetwork {
 }
 
 
-
 console.log('NeuralNetwork class loaded successfully!');
 console.log('Usage: const nn = new NeuralNetwork(); nn.createModel().compileModel();');

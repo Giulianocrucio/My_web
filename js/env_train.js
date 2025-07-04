@@ -1,5 +1,6 @@
 import { rocketBodies } from './rocket.js';
 import { NeuralNetwork } from './BrainRocket.js';
+import { sortIndeces } from './rocket.js';
 
 
 let brain = new NeuralNetwork();
@@ -31,8 +32,15 @@ let rockets = [];
 let distanceFromRockets = 1000;
 let FromRocketToGround = 2500;
 
+let grounds = [];
+let scores = [];
+// initializa the scores to -inf
+for(let i = 0; i<= n_rocket; i++){
+    scores.push(-1000);
+}
+
 // timer options
-let timer_duration = 5; // in seconds
+let timer_duration = 8; // in seconds
 let n_gen = 1;
 
 // Create engine
@@ -78,6 +86,8 @@ function createGrounds(){
             fillStyle: '#4a4a6a'
             }
         });
+
+    grounds.push(ground);
     World.add(world, ground);
     }
 }
@@ -154,26 +164,19 @@ Events.on(engine, 'beforeUpdate', () => {
         console.log("zoom in");
     }
 
-
-    //////////////
-    // test brain
-    //////////////
-    /*
-    const forceMagnitude = 0.005;
-    const pre = brain.predict(rocket.getinput());
-
-    rocket.central_force(pre[0]*forceMagnitude);  // Use first output for central force
-    //rocket.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
-    //rocket.right_force(pre[2]*forceMagnitude);    // Use third output for right force
-
-    console.log(pre[1]);
-    */
-
-
-   //rocket.think();
    for(let i = 0; i < n_rocket; i++){
+
+    // 
     rockets[i].think();
+
+    if (Matter.Collision.collides(rockets[i].rk, grounds[i]) != null) {
+        console.log("collision detected of rocket " + i)
+
+        // get the score and freeze of the rockets
+        scores[i] = rockets[i].getScore();
+    }
    }
+
 
 });
 
@@ -193,6 +196,7 @@ engine.world.gravity.y = 1;
 timer_duration = timer_duration*1000;
 initWorld();
 const timer = setInterval(() => {
+
         /*
         get evaluation of performance
 
@@ -204,7 +208,25 @@ const timer = setInterval(() => {
         restart the simulation
 
         */
+        for(let i = 0; i < n_rocket; i++){
+
+            // if it has not touched the ground yet
+            if (scores[i] != -1000) {
+
+                scores[i] = rockets[i].getScore();
+            }
+        }
+
+        // get the indices of the sorted scores
+        const IndicesSorted = sortIndeces(scores);
+        console.log(IndicesSorted);
+
+
+        World.clear(world);
+        Engine.clear(engine);
+        initWorld();
+
         n_gen = n_gen + 1;
         document.getElementById("n_gen").textContent = `Generation number: ${n_gen}`;
-        console.log("hello");
+
     }, timer_duration); 

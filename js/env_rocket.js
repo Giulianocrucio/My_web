@@ -334,7 +334,7 @@ Render.run(render);
 
 // Add some gravity variation for fun
 engine.world.gravity.y = 1;
-
 initWorld();
+console.log(rocket.getScore());
 window.addBox = addBox;
 window.reset = reset;

@@ -148,12 +148,11 @@ export class rocketBodies {
         const angle = this.rk.angle;
         const angularVelocity = this.rk.angularVelocity;
         const posX = 0;
-        const posY = this.rk.position.y;
 
         // Calculate derived values
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
-        const distanceFromGround = this.distanceGround - posY - ycenter; // positive when above ground
+        const distanceFromGround = this.distanceGround - this.central_pos().y; // positive when above ground
 
         // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
         const bodyTensor = tf.tensor2d([[
@@ -183,6 +182,35 @@ export class rocketBodies {
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
+    }
+
+    // score
+
+    getScore(){
+        let score = 0;
+
+        // it would be good to check all of this in the moment of the impact with the ground
+
+        // distance from the ground
+        const scale1 = 1;
+
+        const distanceFromGround = this.distanceGround - this.central_pos().y; // positive when above ground
+        score -= Math.exp(-Math.abs(distanceFromGround) * scale1);
+
+        // check angular velocity
+        const scale2 = 1;
+        const angleV = this.rk.angularVelocity;
+        score += Math.abs(angleV) * scale2;
+
+        // check orientation
+        const scale3 = 1;
+        const angle = this.rk.angle;
+
+        // check velocity
+        
+
+        return score;
+
     }
 }
 
@@ -241,4 +269,18 @@ export class Particle {
     isDead() {
         return this.life <= 0;
     }
+}
+
+export function sortIndeces(toSort) {
+  for (var i = 0; i < toSort.length; i++) {
+    toSort[i] = [toSort[i], i];
+  }
+  toSort.sort(function(left, right) {
+    return left[0] > right[0] ? -1 : 1;
+  });
+  let indeces = [];
+  for (var j = 0; j < toSort.length; j++) {
+    indeces.push(toSort[j][1]);
+  }
+  return indeces;
 }
