@@ -1,4 +1,3 @@
-import { NeuralNetwork } from './BrainRocket.js';
 import { NNs } from './BrainRocket.js';
 // Matter.js modules
 const Engine = Matter.Engine;

@@ -1,11 +1,7 @@
 import { rocketBodies } from './rocket.js';
-import { NeuralNetwork } from './BrainRocket.js';
 import { sortIndeces } from './rocket.js';
 
 
-let brain = new NeuralNetwork();
-brain.createModel();
-brain.compileModel();
 
 let rocketB;
 let rocket;

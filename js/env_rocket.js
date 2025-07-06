@@ -256,8 +256,8 @@ Events.on(render, 'afterRender', function() {
 
 function logRocketAngle() {
     if (rocketB) {
-        console.log('Rocket angle:', (rocketB.angle));
-        console.log('Rocket position:', { x: rocketB.position.x, y: rocketB.position.y });
+        // // console.log('Rocket angle:', (rocketB.angle));
+        // // console.log('Rocket position:', { x: rocketB.position.x, y: rocketB.position.y });
     }
     requestAnimationFrame(logRocketAngle);
 }
@@ -335,6 +335,6 @@ Render.run(render);
 // Add some gravity variation for fun
 engine.world.gravity.y = 1;
 initWorld();
-console.log(rocket.getScore());
+// // // console.log(rocket.getScore());
 window.addBox = addBox;
 window.reset = reset;
