@@ -186,31 +186,47 @@ export class rocketBodies {
 
     // score
 
-    getScore(){
+    getScore(velocityBeforeImpact = -1){
         let score = 0;
 
-        // it would be good to check all of this in the moment of the impact with the ground
+        // if impact with the ground
+        if(velocityBeforeImpact != -1){
+            score = 2;
+        }
 
         // distance from the ground
-        const scale1 = 1;
+        let scale = 1;
 
-        const distanceFromGround = this.distanceGround - this.central_pos().y; // positive when above ground
-        score -= Math.exp(-Math.abs(distanceFromGround) * scale1);
+        // positive basis of the rocket when above ground
+        const distanceFromGround = this.distanceGround - this.central_pos().y; 
+        score += Math.exp(-Math.abs(distanceFromGround)) * scale;
 
         // check angular velocity
-        const scale2 = 1;
+        scale = 10;
         const angleV = this.rk.angularVelocity;
-        score += Math.abs(angleV) * scale2;
+        score += Math.exp(-Math.abs(angleV)) * scale;
 
         // check orientation
-        const scale3 = 1;
+        scale = 1;
         const angle = this.rk.angle;
+        const normalizedAngle = (angle % (2 * Math.PI));
+        score += Math.exp(-Math.abs(normalizedAngle))*scale;
 
         // check velocity
-        
+        scale = 1;
+        if(velocityBeforeImpact != -1){
+            score += Math.exp(-velocityBeforeImpact) * scale;
+        }
+        else{
+            score += Math.exp(-Body.getSpeed(this.rk)) * scale;
+        }
 
         return score;
 
+    }
+
+    async loadModel(loadPath) {
+        this.brain.loadModel(loadPath);
     }
 }
 

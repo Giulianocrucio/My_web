@@ -27,15 +27,17 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 20;
+let n_rocket = 10;
 let rockets = [];
 let distanceFromRockets = 1000;
 let FromRocketToGround = 2500;
 
 let grounds = [];
+let width_ground = 500;
+let high_ground = 50;
 let scores = [];
 // initializa the scores to -inf
-for(let i = 0; i<= n_rocket; i++){
+for(let i = 0; i< n_rocket; i++){
     scores.push(-1000);
 }
 
@@ -80,7 +82,7 @@ const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, {
 
 function createGrounds(){
     for(let i = 0; i < n_rocket; i++){
-    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , 400 , 40, { 
+    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , width_ground , high_ground, { 
         isStatic: true,
         render: {
             fillStyle: '#4a4a6a'
@@ -113,7 +115,7 @@ function createRockets() {
     for (let i = 0; i < n_rocket; i++) {
         const rocket = new rocketBodies(300 + (distanceFromRockets * i), 50);  
         rocket.initializeBrain();
-        rocket.setHigh(distanceFromRockets);  
+        rocket.setHigh(FromRocketToGround + high_ground/2 );  
         Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         World.add(world, rocket.rk);
         rockets.push(rocket);
@@ -123,6 +125,11 @@ function createRockets() {
 function initWorld(){
     createGrounds();
     createRockets();
+    
+    // initialize scores
+    for(let i = 0; i< n_rocket; i++){
+        scores[i] = -1000;
+    }
 }
 
 document.addEventListener("keydown", (event) => {
@@ -156,6 +163,7 @@ document.addEventListener('keyup', (event) => {
     if (key in keys) keys[key] = false;
 });
 
+let framesV = [0,0];
 Events.on(engine, 'beforeUpdate', () => {
     if (keys.o) {
         console.log("zoom out");
@@ -166,14 +174,16 @@ Events.on(engine, 'beforeUpdate', () => {
 
    for(let i = 0; i < n_rocket; i++){
 
-    // 
+    // remember the velocity of frame before in case of colliding
+    framesV[0] = framesV[1];
+    framesV[1] = Body.getSpeed(rockets[i].rk);
+   
     rockets[i].think();
-
-    if (Matter.Collision.collides(rockets[i].rk, grounds[i]) != null) {
+    if (Matter.Collision.collides(rockets[i].rk, grounds[i]) != null && scores[i] == -1000) {
         console.log("collision detected of rocket " + i)
 
         // get the score and freeze of the rockets
-        scores[i] = rockets[i].getScore();
+        scores[i] = rockets[i].getScore(framesV[0]);
     }
    }
 
@@ -208,19 +218,23 @@ const timer = setInterval(() => {
         restart the simulation
 
         */
+
         for(let i = 0; i < n_rocket; i++){
 
             // if it has not touched the ground yet
-            if (scores[i] != -1000) {
-
+            if (scores[i] == -1000) {
                 scores[i] = rockets[i].getScore();
             }
+        
+        console.log(rockets[i].getScore());
+        // rockets[i].loadModel("data\local_data\models"); // to understand
         }
-
+        console.log("scores:")
+        console.log(scores);
         // get the indices of the sorted scores
+        console.log("indices of best scores:")
         const IndicesSorted = sortIndeces(scores);
         console.log(IndicesSorted);
-
 
         World.clear(world);
         Engine.clear(engine);
