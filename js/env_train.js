@@ -27,7 +27,7 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 10;
+let n_rocket = 100;
 let rockets = [];
 let distanceFromRockets = 1000;
 let FromRocketToGround = 2500;

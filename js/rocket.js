@@ -1,4 +1,5 @@
 import { NeuralNetwork } from './BrainRocket.js';
+import { NNs } from './BrainRocket.js';
 // Matter.js modules
 const Engine = Matter.Engine;
 const Render = Matter.Render;
@@ -155,20 +156,19 @@ export class rocketBodies {
         const distanceFromGround = this.distanceGround - this.central_pos().y; // positive when above ground
 
         // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
-        const bodyTensor = tf.tensor2d([[
+        const bodyTensor = [
             cosAngle,
             sinAngle,
             angularVelocity,
             posX,
             distanceFromGround
-        ]], [1, 5]); // shape: [1, 5] - batch size 1, 5 features
+        ]; // shape: [1, 5] - batch size 1, 5 features
         return bodyTensor;
     }
 
     initializeBrain(){
-        this.brain = new NeuralNetwork();
-        this.brain.createModel();
-        this.brain.compileModel();
+        this.brain = new NNs();
+        this.brain.createNetwork();
     }
 
     loadmodel(){
@@ -177,7 +177,7 @@ export class rocketBodies {
 
     think(){
 
-        const pre = this.brain.predict(this.getinput());
+        const pre = this.brain.forward(this.getinput());
 
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
@@ -226,7 +226,7 @@ export class rocketBodies {
     }
 
     async loadModel(loadPath) {
-        this.brain.loadModel(loadPath);
+        this.brain.loadWeights(loadPath);
     }
 }
 
