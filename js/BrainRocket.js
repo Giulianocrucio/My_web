@@ -228,7 +228,7 @@ export class NNs {
 // Usage example:
 
 // Create a neural network
-const nn = new NNs();
+// const nn = new NNs();
 /*
 // Print network info
 nn.printNetworkInfo();
@@ -246,7 +246,7 @@ nn.printNetworkInfo();
 nn.loadWeights(currentWeights);
 */
 
-
+/*
 // Test forward pass
 for(let i = 0; i<100; i++){
     let row = [];
@@ -256,11 +256,10 @@ for(let i = 0; i<100; i++){
     //console.log((row));
     console.log(nn.forward(row));
 }
+*/
 // nn.printNetworkInfo();
 
-class mixBrains{
-
-    mix(brains_parents, n_child, mutationFactor){
+export function mixBrains(brains_parents, n_child, mutationFactor){
 
     const n_parents = brains_parents.length;
     /*
@@ -271,40 +270,44 @@ class mixBrains{
         compute mutation
     */
 
-    let vector_parent = [];
-    let vector_child = [];
+    let vector_weight_parent = [];
+    let vector_weight_child = [];
+    let brains_children = [];
 
     // get the vectors
     for(let i = 0; i<n_parents;i++){
-        vector_parent.push(brains_parents[i].extractWeights())
+        vector_weight_parent.push(brains_parents[i].extractWeights())
     }
 
     // mix the vectors 
-    for(let k = 0; k<n_child ; k++){
+    for(let k = 0; k < n_child ; k++){
 
-        let weights_child = new Array(vector_parent[0].length);
+        let weights_child = new Array(vector_weight_parent[0].length);
 
-        for(let i = 0; i<vector_parent[0].length; i++){
+        for(let i = 0; i<vector_weight_parent[0].length; i++){
             // select a random parent
-            const randomIndexParent = Math.floor(Math.random() * vector_parent.length);
-            weights_child[i] = vector_parent[randomIndexParent][i];
+            const randomIndexParent = Math.floor(Math.random() * vector_weight_parent.length);
+            weights_child[i] = vector_weight_parent[randomIndexParent][i];
         }
-        vector_child.push(weights_child)
+        vector_weight_child.push(weights_child)
     }
 
     // compute mutation
     for(let k = 0; k<n_child ; k++){
 
-        for(let i = 0; i<vector_parent[0].length; i++){
+        for(let i = 0; i<vector_weight_parent[0].length; i++){
             
-            // uniformly choosen in [-mutationFactor,mutationFactor]
-            vector_child[k][i] = (Math.random * 2 -1) * mutationFactor;
+            // uniformly choosen in [-mutationFactor, mutationFactor]
+            vector_weight_child[k][i] += (Math.random * 2 -1) * mutationFactor;
 
         }
+
+        // load brains
+        const new_brain = new NNs();
+        new_brain.loadWeights(vector_weight_child[k]);
+
+        brains_children.push(new_brain)
+    }
+    return brains_children;
     }
 
-    // load the new brains
-        
-
-    }
-}

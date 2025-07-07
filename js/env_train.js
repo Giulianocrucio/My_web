@@ -1,5 +1,6 @@
 import { rocketBodies } from './rocket.js';
 import { sortIndeces } from './rocket.js';
+import { UpdateBrains } from './rocket.js';
 
 
 
@@ -130,6 +131,16 @@ function createRockets() {
 function initWorld(){
     createGround();
     createRockets();
+    
+    // initialize scores
+    for(let i = 0; i< n_rocket; i++){
+        scores[i] = -1000;
+    }
+}
+
+function initWorld_newGen(){
+    createGround();
+    rockets = UpdateBrains(rockets,scores,0.5,10,n_gen);
     
     // initialize scores
     for(let i = 0; i< n_rocket; i++){

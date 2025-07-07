@@ -1,4 +1,5 @@
 import { NNs } from './BrainRocket.js';
+import { mixBrains } from './BrainRocket.js';
 // Matter.js modules
 const Engine = Matter.Engine;
 const Render = Matter.Render;
@@ -227,8 +228,25 @@ export class rocketBodies {
     async loadModel(loadPath) {
         this.brain.loadWeights(loadPath);
     }
-}
 
+}
+export async function  UpdateBrains(rockets, scores, mutation_factor, n_toSave, n_gen){
+
+        const IndicesSorted = sortIndeces(scores);
+        let parents = [];
+        n_toSave = Math.min(n_toSave,rockets.length);
+        for(let i = 0; i < n_toSave; i++){
+            parents.push(rockets[IndicesSorted[i]].brain);
+        }
+
+        const child_brains = mixBrains(parents,n_toSave,mutation_factor);
+
+        for(let i = 0; i<rockets; i++){
+            rockets[i].brain = child_brains[i];
+        }
+
+    }
+    
 function centerofmass(){
 
     const b = bottomwidth;
