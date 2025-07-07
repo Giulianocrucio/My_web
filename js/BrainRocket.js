@@ -5,7 +5,7 @@ export class NNs {
     constructor() {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
-        this.layers = [5,64,64,3];
+        this.layers = [5,32,64,32,3];
         this.weights = [];
         this.biases = [];
         
@@ -27,7 +27,7 @@ export class NNs {
 
                     // Xavier initialization
                     const limit = 10*Math.sqrt(6 / (inputSize + outputSize));
-                    const weighttoadd = (Math.random() * 2 * limit - limit) * (this.layers.length - i)**2;
+                    const weighttoadd = (Math.random() * 2 * limit - limit) * 3;
                     row.push(weighttoadd);
 
                 }
@@ -244,13 +244,14 @@ nn.loadWeights(nn.getWeights('./my_weights.json'));
 nn.printNetworkInfo();
 nn.loadWeights(currentWeights);
 */
-// nn.printNetworkInfo();
+
 
 // Test forward pass
 for(let i = 0; i<100; i++){
     let row = [];
     for(let j = 0; j<5;j++){
-        row.push(Math.random()*100 - 50);
+        row.push(Math.random()*2 - 1);
     }
     console.log(nn.forward(row));
 }
+nn.printNetworkInfo();

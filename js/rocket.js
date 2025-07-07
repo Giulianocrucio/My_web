@@ -146,13 +146,13 @@ export class rocketBodies {
 
         // Extract information from the Matter.js body
         const angle = this.rk.angle;
-        const angularVelocity = this.rk.angularVelocity ;
+        const angularVelocity = this.rk.angularVelocity * 100 ;
         const posX = 0;
 
         // Calculate derived values
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
-        const distanceFromGround = this.distanceGround - this.central_pos().y; // positive when above ground
+        const distanceFromGround = (this.distanceGround - this.central_pos().y) / 300; 
 
         // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
         const bodyTensor = [

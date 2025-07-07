@@ -23,7 +23,7 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 200;
+let n_rocket = 50;
 let rockets = [];
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
@@ -181,8 +181,9 @@ Events.on(engine, 'beforeUpdate', () => {
 
     
     // debug NNs
-    if(i == 1){
-        console.log(rockets[i].brain.forward(rockets[i].getinput()))
+    if(i == 0){
+        console.log("input: ", rockets[i].getinput())
+        console.log("forward pass: ", rockets[i].brain.forward(rockets[i].getinput()))
     }
     
    
