@@ -27,7 +27,8 @@ export class NNs {
 
                     // Xavier initialization
                     const limit = 10*Math.sqrt(6 / (inputSize + outputSize));
-                    const weighttoadd = (Math.random() * 2 * limit - limit) * 3;
+                    const weighttoadd = (Math.random() * 2 * limit - limit) * 4;
+
                     row.push(weighttoadd);
 
                 }
@@ -252,6 +253,58 @@ for(let i = 0; i<100; i++){
     for(let j = 0; j<5;j++){
         row.push(Math.random()*2 - 1);
     }
+    //console.log((row));
     console.log(nn.forward(row));
 }
-nn.printNetworkInfo();
+// nn.printNetworkInfo();
+
+class mixBrains{
+
+    mix(brains_parents, n_child, mutationFactor){
+
+    const n_parents = brains_parents.length;
+    /*
+        get the vectors
+
+        mix the vectors 
+
+        compute mutation
+    */
+
+    let vector_parent = [];
+    let vector_child = [];
+
+    // get the vectors
+    for(let i = 0; i<n_parents;i++){
+        vector_parent.push(brains_parents[i].extractWeights())
+    }
+
+    // mix the vectors 
+    for(let k = 0; k<n_child ; k++){
+
+        let weights_child = new Array(vector_parent[0].length);
+
+        for(let i = 0; i<vector_parent[0].length; i++){
+            // select a random parent
+            const randomIndexParent = Math.floor(Math.random() * vector_parent.length);
+            weights_child[i] = vector_parent[randomIndexParent][i];
+        }
+        vector_child.push(weights_child)
+    }
+
+    // compute mutation
+    for(let k = 0; k<n_child ; k++){
+
+        for(let i = 0; i<vector_parent[0].length; i++){
+            
+            // uniformly choosen in [-mutationFactor,mutationFactor]
+            vector_child[k][i] = (Math.random * 2 -1) * mutationFactor;
+
+        }
+    }
+
+    // load the new brains
+        
+
+    }
+}
