@@ -146,7 +146,7 @@ export class rocketBodies {
 
         // Extract information from the Matter.js body
         const angle = this.rk.angle;
-        const angularVelocity = this.rk.angularVelocity;
+        const angularVelocity = this.rk.angularVelocity ;
         const posX = 0;
 
         // Calculate derived values
@@ -161,7 +161,7 @@ export class rocketBodies {
             angularVelocity,
             posX,
             distanceFromGround
-        ]; // shape: [1, 5] - batch size 1, 5 features
+        ]; 
         return bodyTensor;
     }
 

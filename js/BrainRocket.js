@@ -24,8 +24,12 @@ export class NNs {
             for (let j = 0; j < inputSize; j++) {
                 const row = [];
                 for (let k = 0; k < outputSize; k++) {
-                    // Random initialization between -1 and 1
-                    row.push((Math.random() * 2) - 1);
+
+                    // Xavier initialization
+                    const limit = 10*Math.sqrt(6 / (inputSize + outputSize));
+                    const weighttoadd = (Math.random() * 2 * limit - limit) * (this.layers.length - i)**2;
+                    row.push(weighttoadd);
+
                 }
                 weightMatrix.push(row);
             }
@@ -39,6 +43,14 @@ export class NNs {
             this.biases.push(biasVector);
         }
     }
+
+    randn() {
+        let u = 0, v = 0;
+        while(u === 0) u = Math.random();
+        while(v === 0) v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
     
     // Helper function to convert matrix structure to flat array
     weightsToVector() {
@@ -176,25 +188,28 @@ export class NNs {
                 
                 if (isOutputLayer) {
                     // Use linear for output layer
-                    newActivations.push(this.sigmoid(sum));
+                    newActivations.push(Math.tanh(sum));
                 } else {
                     // Use ReLU for hidden layers
-                    newActivations.push(Math.max(0, sum));
+                    newActivations.push(Math.max(0,sum));
+                    
                 }
             }
             
             activations = newActivations;
         }
         
+        
         // output 0 or 1
         for(let i = 0; i < activations.length; i++ ){
-          if(activations[i] >= 0.5){
+          if(activations[i] >= 0){
             activations[i] = 1;
           }
           else{
             activations[i] = 0;
           }
         }
+        
         return activations;
     }
     
@@ -208,12 +223,12 @@ export class NNs {
     }
 }
 
-/*
+
 // Usage example:
 
 // Create a neural network
-const nn = new SimpleNeuralNetwork();
-
+const nn = new NNs();
+/*
 // Print network info
 nn.printNetworkInfo();
 
@@ -228,9 +243,14 @@ nn.saveWeights('./my_weights.json');
 nn.loadWeights(nn.getWeights('./my_weights.json'));
 nn.printNetworkInfo();
 nn.loadWeights(currentWeights);
-nn.printNetworkInfo();
+*/
+// nn.printNetworkInfo();
 
 // Test forward pass
-const output = nn.forward([0.5, 0.3, 0.8,1,1]);
-console.log('Network output:', output);
-*/
+for(let i = 0; i<100; i++){
+    let row = [];
+    for(let j = 0; j<5;j++){
+        row.push(Math.random()*100 - 50);
+    }
+    console.log(nn.forward(row));
+}

@@ -23,12 +23,14 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 100;
+let n_rocket = 200;
 let rockets = [];
-let distanceFromRockets = 1000;
+let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
+let x_generation = 2000;
 
 let grounds = [];
+let only_ground;
 let width_ground = 500;
 let high_ground = 50;
 let scores = [];
@@ -68,17 +70,20 @@ const render = Render.create({
     }
 });
 
-// Create ground
-const ground = Bodies.rectangle(WIDTH / 2, HIGH - 20, WIDTH, 40, { 
-    isStatic: true,
-    render: {
-        fillStyle: '#4a4a6a'
-    }
-});
+function createGround(){
+    // Create ground
+    only_ground = Bodies.rectangle(x_generation, 50 + FromRocketToGround , width_ground, high_ground, { 
+        isStatic: true,
+        render: {
+            fillStyle: '#4a4a6a'
+        }
+    });
+    World.add(world, only_ground);
+}
 
 function createGrounds(){
     for(let i = 0; i < n_rocket; i++){
-    const ground = Bodies.rectangle(300 + (distanceFromRockets * i), 50 + FromRocketToGround , width_ground , high_ground, { 
+    const ground = Bodies.rectangle(x_generation + (distanceFromRockets * i), 50 + FromRocketToGround , width_ground , high_ground, { 
         isStatic: true,
         render: {
             fillStyle: '#4a4a6a'
@@ -109,17 +114,21 @@ function createRocket() {
 function createRockets() {
     rockets = []; 
     for (let i = 0; i < n_rocket; i++) {
-        const rocket = new rocketBodies(300 + (distanceFromRockets * i), 50);  
+        const rocket = new rocketBodies(x_generation, 50);  
         rocket.initializeBrain();
         rocket.setHigh(FromRocketToGround + high_ground/2 );  
         Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         World.add(world, rocket.rk);
         rockets.push(rocket);
+
+        // add noise
+        Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
+        Body.setAngularVelocity(rocket.rk, (Math.random()-0.5)*0.05 );
     }
 }
 
 function initWorld(){
-    createGrounds();
+    createGround();
     createRockets();
     
     // initialize scores
@@ -170,12 +179,19 @@ Events.on(engine, 'beforeUpdate', () => {
 
    for(let i = 0; i < n_rocket; i++){
 
+    
+    // debug NNs
+    if(i == 1){
+        console.log(rockets[i].brain.forward(rockets[i].getinput()))
+    }
+    
+   
     // remember the velocity of frame before in case of colliding
     framesV[0] = framesV[1];
     framesV[1] = Body.getSpeed(rockets[i].rk);
    
     rockets[i].think();
-    if (Matter.Collision.collides(rockets[i].rk, grounds[i]) != null && scores[i] == -1000) {
+    if (Matter.Collision.collides(rockets[i].rk, only_ground) != null && scores[i] == -1000) {
         console.log("collision detected of rocket " + i)
 
         // get the score and freeze of the rockets
