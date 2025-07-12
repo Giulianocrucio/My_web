@@ -2,10 +2,10 @@
 
 // Neural Network: 5 inputs -> 2 hidden layers (64 neurons each, ReLU) -> 3 outputs [0,1]
 export class NNs {
-    constructor() {
+    constructor(layers = [5,32,64,32,3]) {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
-        this.layers = [5,32,64,32,3];
+        this.layers = layers;
         this.weights = [];
         this.biases = [];
         
@@ -228,23 +228,23 @@ export class NNs {
 // Usage example:
 
 // Create a neural network
-// const nn = new NNs();
-/*
+//  const nn = new NNs();
+
 // Print network info
-nn.printNetworkInfo();
+// nn.printNetworkInfo();
 
 // Extract current weights
-const currentWeights = nn.extractWeights();
-console.log('Current weights:', currentWeights);
+// const currentWeights = nn.extractWeights();
+// console.log('Current weights:', currentWeights.length);
 
 // Save weights to file (Node.js only)
-nn.saveWeights('./my_weights.json');
+//nn.saveWeights('./my_weights.json');
 
 // Load weights from file (Node.js only)
-nn.loadWeights(nn.getWeights('./my_weights.json'));
-nn.printNetworkInfo();
-nn.loadWeights(currentWeights);
-*/
+//nn.loadWeights(nn.getWeights('./my_weights.json'));
+// nn.printNetworkInfo();
+// nn.loadWeights(currentWeights);
+
 
 /*
 // Test forward pass
@@ -276,8 +276,10 @@ export function mixBrains(brains_parents, n_child, mutationFactor){
 
     // get the vectors
     for(let i = 0; i<n_parents;i++){
+        // BUG : extractWeights() double the weights
         vector_weight_parent.push(brains_parents[i].extractWeights())
     }
+
 
     // mix the vectors 
     for(let k = 0; k < n_child ; k++){
@@ -292,22 +294,23 @@ export function mixBrains(brains_parents, n_child, mutationFactor){
         vector_weight_child.push(weights_child)
     }
 
+   
     // compute mutation
     for(let k = 0; k<n_child ; k++){
 
         for(let i = 0; i<vector_weight_parent[0].length; i++){
             
             // uniformly choosen in [-mutationFactor, mutationFactor]
-            vector_weight_child[k][i] += (Math.random * 2 -1) * mutationFactor;
+            vector_weight_child[k][i] += (Math.random() * 2 -1) * mutationFactor;
 
         }
 
         // load brains
-        const new_brain = new NNs();
+        const new_brain = new NNs(brains_parents[0].layers);
         new_brain.loadWeights(vector_weight_child[k]);
 
-        brains_children.push(new_brain)
+        brains_children.push(new_brain);
     }
     return brains_children;
-    }
+}
 

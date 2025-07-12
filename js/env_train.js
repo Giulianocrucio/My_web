@@ -42,15 +42,17 @@ for(let i = 0; i< n_rocket; i++){
 }
 
 // timer options
-let timer_duration = 8; // in seconds
+let time_scale = 2;
+let timer_duration = 8/time_scale; // in seconds
 let n_gen = 1;
+
 
 // Create engine
 const engine = Engine.create({
     positionIterations: 6, 
     velocityIterations: 4  
 });
-engine.timing.timeScale = 1;
+engine.timing.timeScale = time_scale;
 const world = engine.world;
 
 // Create renderer
@@ -133,9 +135,10 @@ function createRockets() {
 
         
         // add noise
+
         Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
-        Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        Body.setAngularVelocity(rocket.rk, (Math.random()-0.5)*0.05 );
+        // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
+        // Body.setAngularVelocity(rocket.rk, (Math.random()-0.5)*0.05 );
         
     }
 }

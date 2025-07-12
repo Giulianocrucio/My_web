@@ -168,7 +168,6 @@ export class rocketBodies {
 
     initializeBrain(){
         this.brain = new NNs();
-        this.brain.createNetwork();
     }
 
     loadmodel(){
@@ -233,14 +232,17 @@ export class rocketBodies {
 export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
 
         const IndicesSorted = sortIndeces(scores);
-        let parents = [];
+        let parents_brains = [];
         n_toSave = Math.min(n_toSave,rockets.length);
 
         for(let i = 0; i < n_toSave; i++){
-            parents.push(rockets[IndicesSorted[i]].brain);
+            parents_brains.push(rockets[IndicesSorted[i]].brain);
         }
 
-        const child_brains = mixBrains(parents,n_toSave, 0.3);
+        // console.log(parents_brains[0].printNetworkInfo());
+
+        const child_brains = mixBrains(parents_brains, n_toSave, 0.3);
+        
 /*
         for(let i = 0; i<rockets; i++){
             rockets[i].brain = child_brains[i];
