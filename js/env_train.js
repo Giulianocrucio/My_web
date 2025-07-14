@@ -25,6 +25,7 @@ const zoomStep = 0.1;
 
 // rockets options
 let n_rocket = 50;
+let n_toSave = 20;
 let rockets = [];
 let brains_rk = [];
 let distanceFromRockets = 0;
@@ -36,14 +37,14 @@ let only_ground;
 let width_ground = 500;
 let high_ground = 50;
 let scores = [];
-// initializa the scores to -inf
+// initializa the scores to -1
 for(let i = 0; i< n_rocket; i++){
-    scores.push(-1000);
+    scores.push(-1);
 }
 
 // timer options
-let time_scale = 2;
-let timer_duration = 8/time_scale; // in seconds
+let time_scale = 5;
+let timer_duration = 8 / time_scale; // in seconds
 let n_gen = 1;
 
 
@@ -121,7 +122,6 @@ function createRockets() {
         const rocket = new rocketBodies(x_generation, 50);  
         rocket.initializeBrain();
         rocket.setHigh(FromRocketToGround + high_ground/2 );  
-        // console.log("Rocket object at line 214:", rocket);
 
         /*
         // update new generation brains
@@ -136,7 +136,7 @@ function createRockets() {
         
         // add noise
 
-        Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
         // Body.setAngularVelocity(rocket.rk, (Math.random()-0.5)*0.05 );
         
@@ -147,13 +147,13 @@ function initWorld(){
 
     // initialize scores
     for(let i = 0; i< n_rocket; i++){
-        scores[i] = -1000;
+        scores[i] = -1;
     }
 
     // udate new generation brains
     if(n_gen > 1){
         console.log("new children created")
-        brains_rk = UpdateBrains(rockets, scores, 10, n_gen);
+        brains_rk = UpdateBrains(rockets, scores, n_toSave, n_gen);
     }
 
     createGround();
@@ -214,6 +214,7 @@ timer_duration = timer_duration*1000;
 initWorld();
 const timer = setInterval(() => {
         n_gen = n_gen + 1;
+        addMedianScoreData();
 
         /*
         get evaluation of performance
@@ -230,7 +231,7 @@ const timer = setInterval(() => {
         for(let i = 0; i < n_rocket; i++){
 
             // if it has not touched the ground yet
-            if (scores[i] == -1000) {
+            if (scores[i] == -1) {
                 scores[i] = rockets[i].getScore();
             }
         
@@ -244,12 +245,10 @@ const timer = setInterval(() => {
         const IndicesSorted = sortIndeces(scores);
         // console.log(IndicesSorted);
         // BUG
-        console.log(scores);
+        // console.log(scores);
         World.clear(world);
         Engine.clear(engine);
         initWorld();
-
-        addMedianScoreData();
         
         document.getElementById("n_gen").textContent = `Generation number: ${n_gen}`;
 
@@ -283,12 +282,12 @@ Events.on(engine, 'beforeUpdate', () => {
     //console.log("Only ground:", only_ground);
 
     // entra in questo if solo nella prima generazione
-    if (Matter.Collision.collides(rockets[i].rk, only_ground) != null && scores[i] == -1000) {
-        console.log("collision detected of rocket " + i)
+    if (Matter.Collision.collides(rockets[i].rk, only_ground) != null && scores[i] == -1) {
+        // console.log("collision detected of rocket " + i)
 
         // get the score and freeze of the rockets
         scores[i] = rockets[i].getScore(framesV[0]);
-        console.log(scores[i]);
+        // console.log(scores[i]);
 
     }
    }
@@ -314,12 +313,12 @@ options: {
     animation: false,
     scales: {
     x: {
-        title: { display: true, text: 'Time' }
+        title: { display: true, text: 'generation' }
     },
     y: {
         title: { display: true, text: 'Value' },
         suggestedMin: 0,
-        suggestedMax: 100
+        suggestedMax: 10
     }
     }
 }
@@ -334,17 +333,24 @@ function median(arr) {
     }
 }
 function addMedianScoreData() {
-    const now = new Date().toLocaleTimeString();
-    const validScores = scores.filter(s => s !== -1000); // ignore untouched rockets
+
+    // const validScores = scores.filter(s => s !== -1); // ignore untouched rockets
+    const validScores = scores;
     const medianScore = validScores.length > 0 ? median(validScores) : 0;
 
-    chart.data.labels.push(now);
-    chart.data.datasets[0].data.push(medianScore);
+    const average = validScores => validScores.reduce((a, b) => a + b) / validScores.length;
+     
+    const mean_score = average(validScores);
 
+    chart.data.labels.push(n_gen);
+    chart.data.datasets[0].data.push(mean_score);
+
+    /*
     if (chart.data.labels.length > 20) {
         chart.data.labels.shift();
         chart.data.datasets[0].data.shift();
     }
+    */
 
     chart.update();
 }

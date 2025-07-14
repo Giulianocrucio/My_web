@@ -259,9 +259,15 @@ for(let i = 0; i<100; i++){
 */
 // nn.printNetworkInfo();
 
+// extract a weght from 0 to N-1
+function rnd_n(N){
+    return Math.floor(Math.random() * N);
+}
+
 export function mixBrains(brains_parents, n_child, mutationFactor){
 
     const n_parents = brains_parents.length;
+
     /*
         get the vectors
 
@@ -286,10 +292,13 @@ export function mixBrains(brains_parents, n_child, mutationFactor){
 
         let weights_child = new Array(vector_weight_parent[0].length);
 
+
+        // select two random parents
+        const randomParents = [ vector_weight_parent[rnd_n(n_parents)],
+                                vector_weight_parent[rnd_n(n_parents)]];
+
         for(let i = 0; i<vector_weight_parent[0].length; i++){
-            // select a random parent
-            const randomIndexParent = Math.floor(Math.random() * vector_weight_parent.length);
-            weights_child[i] = vector_weight_parent[randomIndexParent][i];
+            vector_weight_child[i] = randomParents[rnd_n(2)][i] + (Math.random() * mutationFactor);
         }
         vector_weight_child.push(weights_child)
     }

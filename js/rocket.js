@@ -241,14 +241,8 @@ export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
 
         // console.log(parents_brains[0].printNetworkInfo());
 
-        const child_brains = mixBrains(parents_brains, n_toSave, 0.3);
+        const child_brains = mixBrains(parents_brains, n_toSave, 0.1);
         
-/*
-        for(let i = 0; i<rockets; i++){
-            rockets[i].brain = child_brains[i];
-        }
-*/
-
         return child_brains;
 
     }
@@ -311,10 +305,8 @@ export class Particle {
 }
 
 export function sortIndeces(input_vec) {
-    let toSort = input_vec;
-    for (var i = 0; i < toSort.length; i++) {
-            toSort[i] = [toSort[i], i];
-    }
+    // Create a copy of input_vec with value-index pairs
+    let toSort = input_vec.map((value, index) => [value, index]);
     toSort.sort(function(left, right) {
         return left[0] > right[0] ? -1 : 1;
     });
