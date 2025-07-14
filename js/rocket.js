@@ -179,7 +179,6 @@ export class rocketBodies {
         if (this.brain && typeof this.brain.forward !== 'undefined') {
         if(!this.TuchedTheGround){
         const pre = this.brain.forward(this.getinput());
-
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
@@ -237,15 +236,14 @@ export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
 
         const IndicesSorted = sortIndeces(scores);
         let parents_brains = [];
-        n_toSave = Math.min(n_toSave,rockets.length);
+
 
         for(let i = 0; i < n_toSave; i++){
             parents_brains.push(rockets[IndicesSorted[i]].brain);
         }
 
-        // console.log(parents_brains[0].printNetworkInfo());
 
-        const child_brains = mixBrains(parents_brains, n_toSave, 0.1);
+        const child_brains = mixBrains(parents_brains, rockets.length, 0.1,n_gen);
         
         return child_brains;
 

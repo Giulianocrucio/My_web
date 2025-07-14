@@ -125,11 +125,15 @@ function createRockets() {
         rocket.initializeBrain();
         rocket.setHigh(FromRocketToGround + high_ground/2 );  
 
-        
+        /*
         // update new generation brains
         if(n_gen > 1){
             rocket.brain = brains_rk[i];
         }
+        */
+
+        console.log("ngen = ", n_gen, "esite brain?", rocket.brain);
+        
             
 
         World.add(world, rocket.rk);
@@ -147,15 +151,20 @@ function createRockets() {
 
 function initWorld(){
 
-    // initialize scores
-    for(let i = 0; i< n_rocket; i++){
-        scores[i] = -1;
-    }
+
 
     // udate new generation brains
     if(n_gen > 1){
-        console.log("mixing brains..");
+        // console.log("mixing brains..");
+        // console.log("if in initworld has brain?",rockets[0].brain, "n_gen: ", n_gen);
+        
         brains_rk = UpdateBrains(rockets, scores, n_toSave, n_gen);
+        // console.log(brains_rk);
+    }
+
+    // initialize scores
+    for(let i = 0; i< n_rocket; i++){
+        scores[i] = -1;
     }
 
     createGround();
@@ -240,16 +249,12 @@ Events.on(engine, 'beforeUpdate', () => {
     framesV[1] = Body.getSpeed(rockets[i].rk);
 
     rockets[i].think();
-    //console.log("Rocket", i, "rk:", rockets[i].rk);
-    //console.log("Only ground:", only_ground);
 
-    // entra in questo if solo nella prima generazione
     if (Matter.Collision.collides(rockets[i].rk, only_ground) != null && scores[i] == -1) {
-        // console.log("collision detected of rocket " + i)
+        // console.log("collision detected of rocket " + i);
 
         // get the score and freeze of the rockets
         scores[i] = rockets[i].getScore(framesV[0]);
-        // console.log(scores[i]);
         rockets[i].TuchedTheGround = true;
 
     }
@@ -329,7 +334,6 @@ function start_timer(){
     clearInterval(timer);
     timer = setInterval(() => {
         n_gen = n_gen + 1;
-        addMedianScoreData();
         console.log("generation n: ", n_gen);
         /*
         get evaluation of performance
@@ -350,17 +354,11 @@ function start_timer(){
                 scores[i] = rockets[i].getScore();
             }
         
-        // console.log(rockets[i].getScore());
         // rockets[i].loadModel("data\local_data\models"); // to understand
         }
-        // console.log("scores:")
-        // console.log(scores);
-        // get the indices of the sorted scores
-        // console.log("indices of best scores:")
-        const IndicesSorted = sortIndeces(scores);
-        // console.log(IndicesSorted);
-        // BUG
-        console.log(scores);
+        addMedianScoreData();
+        
+        // console.log("scores: ",scores);
         World.clear(world);
         Engine.clear(engine);
         initWorld();

@@ -264,7 +264,7 @@ function rnd_n(N){
     return Math.floor(Math.random() * N);
 }
 
-export function mixBrains(brains_parents, n_child, mutationFactor){
+export function mixBrains(brains_parents, n_child, mutationFactor,n_gen){
 
     const n_parents = brains_parents.length;
 
@@ -282,7 +282,6 @@ export function mixBrains(brains_parents, n_child, mutationFactor){
 
     // get the vectors
     for(let i = 0; i<n_parents;i++){
-        // BUG : extractWeights() double the weights
         vector_weight_parent.push(brains_parents[i].extractWeights())
     }
 
