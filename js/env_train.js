@@ -24,7 +24,7 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 50;
+let n_rocket = 20;
 let n_toSave = 20;
 let rockets = [];
 let brains_rk = [];
@@ -43,8 +43,9 @@ for(let i = 0; i< n_rocket; i++){
 }
 
 // timer options
-let time_scale = 5;
-let timer_duration = 8 / time_scale; // in seconds
+let time_scale = 1;
+let timer_generation = 7; // in seconds
+let timer_duration = timer_generation / time_scale; // in seconds
 let n_gen = 1;
 
 
@@ -245,7 +246,7 @@ const timer = setInterval(() => {
         const IndicesSorted = sortIndeces(scores);
         // console.log(IndicesSorted);
         // BUG
-        // console.log(scores);
+        console.log(scores);
         World.clear(world);
         Engine.clear(engine);
         initWorld();
@@ -318,7 +319,7 @@ options: {
     y: {
         title: { display: true, text: 'Value' },
         suggestedMin: 0,
-        suggestedMax: 10
+        suggestedMax: 0.5
     }
     }
 }
@@ -338,7 +339,7 @@ function addMedianScoreData() {
     const validScores = scores;
     const medianScore = validScores.length > 0 ? median(validScores) : 0;
 
-    const average = validScores => validScores.reduce((a, b) => a + b) / validScores.length;
+    const average = array => array.reduce((a, b) => a + b) / array.length;
      
     const mean_score = average(validScores);
 
@@ -354,4 +355,15 @@ function addMedianScoreData() {
 
     chart.update();
 }
+
+window.timeScale = 1.0;
+const slider = document.getElementById('timeScaleSlider');
+const valueSpan = document.getElementById('timeScaleValue');
+slider.addEventListener('input', function() {
+    window.timeScale = parseFloat(slider.value);
+    valueSpan.textContent = window.timeScale.toFixed(1);
+    time_scale = window.timeScale;
+    timer_duration = timer_generation / time_scale; // in seconds
+    engine.timing.timeScale = time_scale;
+});
 

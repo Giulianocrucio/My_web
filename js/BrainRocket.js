@@ -2,7 +2,7 @@
 
 // Neural Network: 5 inputs -> 2 hidden layers (64 neurons each, ReLU) -> 3 outputs [0,1]
 export class NNs {
-    constructor(layers = [5,32,64,32,3]) {
+    constructor(layers = [5,16,16,3]) {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
         this.layers = layers;
@@ -298,7 +298,7 @@ export function mixBrains(brains_parents, n_child, mutationFactor){
                                 vector_weight_parent[rnd_n(n_parents)]];
 
         for(let i = 0; i<vector_weight_parent[0].length; i++){
-            vector_weight_child[i] = randomParents[rnd_n(2)][i] + (Math.random() * mutationFactor);
+            weights_child[i] = randomParents[rnd_n(2)][i];
         }
         vector_weight_child.push(weights_child)
     }

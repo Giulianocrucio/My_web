@@ -201,9 +201,9 @@ export class rocketBodies {
         score += Math.exp(-Math.abs(distanceFromGround)) * scale;
 
         // check angular velocity
-        scale = 10;
+        scale = 1;
         const angleV = this.rk.angularVelocity;
-        score += Math.exp(-Math.abs(angleV)) * scale;
+        score += Math.exp(-Math.abs(angleV)) ;
 
         // check orientation
         scale = 1;
