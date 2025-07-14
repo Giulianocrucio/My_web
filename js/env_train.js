@@ -243,11 +243,13 @@ const timer = setInterval(() => {
         // console.log("indices of best scores:")
         const IndicesSorted = sortIndeces(scores);
         // console.log(IndicesSorted);
-
+        // BUG
+        console.log(scores);
         World.clear(world);
         Engine.clear(engine);
         initWorld();
 
+        addMedianScoreData();
         
         document.getElementById("n_gen").textContent = `Generation number: ${n_gen}`;
 
@@ -275,15 +277,75 @@ Events.on(engine, 'beforeUpdate', () => {
     // remember the velocity of frame before in case of colliding
     framesV[0] = framesV[1];
     framesV[1] = Body.getSpeed(rockets[i].rk);
-   
+
     rockets[i].think();
+    //console.log("Rocket", i, "rk:", rockets[i].rk);
+    //console.log("Only ground:", only_ground);
+
+    // entra in questo if solo nella prima generazione
     if (Matter.Collision.collides(rockets[i].rk, only_ground) != null && scores[i] == -1000) {
-        // console.log("collision detected of rocket " + i)
+        console.log("collision detected of rocket " + i)
 
         // get the score and freeze of the rockets
         scores[i] = rockets[i].getScore(framesV[0]);
+        console.log(scores[i]);
+
     }
    }
 
 
 });
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const chart = new Chart(ctx, {
+type: 'line',
+data: {
+    labels: [], // timestamps
+    datasets: [{
+    label: 'Median Score',
+    data: [],
+    borderColor: 'blue',
+    borderWidth: 2,
+    fill: false,
+    }]
+},
+options: {
+    responsive: false,
+    animation: false,
+    scales: {
+    x: {
+        title: { display: true, text: 'Time' }
+    },
+    y: {
+        title: { display: true, text: 'Value' },
+        suggestedMin: 0,
+        suggestedMax: 100
+    }
+    }
+}
+});
+function median(arr) {
+    const sorted = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+        return (sorted[mid - 1] + sorted[mid]) / 2;
+    } else {
+        return sorted[mid];
+    }
+}
+function addMedianScoreData() {
+    const now = new Date().toLocaleTimeString();
+    const validScores = scores.filter(s => s !== -1000); // ignore untouched rockets
+    const medianScore = validScores.length > 0 ? median(validScores) : 0;
+
+    chart.data.labels.push(now);
+    chart.data.datasets[0].data.push(medianScore);
+
+    if (chart.data.labels.length > 20) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+    }
+
+    chart.update();
+}
+
