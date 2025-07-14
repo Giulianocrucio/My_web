@@ -24,6 +24,7 @@ export class rocketBodies {
         // to think
         this.brain;
         this.distanceGround = 300;
+        this.TuchedTheGround = false;
 
         // Create a trapezoid below the rectangle
         const width = bottomwidth;
@@ -175,16 +176,19 @@ export class rocketBodies {
     }
 
     think(){
-
+        if (this.brain && typeof this.brain.forward !== 'undefined') {
+        if(!this.TuchedTheGround){
         const pre = this.brain.forward(this.getinput());
 
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
+        }
+    }
     }
 
     // score
-
+    // max scores = 6
     getScore(velocityBeforeImpact = -1){
         let score = 0;
 
@@ -220,7 +224,7 @@ export class rocketBodies {
             score += Math.exp(-Body.getSpeed(this.rk)) * scale;
         }
 
-        return score;
+        return score; 
 
     }
 
