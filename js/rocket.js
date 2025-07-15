@@ -217,7 +217,7 @@ export class rocketBodies {
         // check velocity
         scale = 1;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact) * scale;
+            score += Math.exp(-velocityBeforeImpact * velocityBeforeImpact) * scale;
         }
         else{
             score += Math.exp(-Body.getSpeed(this.rk)) * scale;
@@ -240,6 +240,7 @@ export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
 
         for(let i = 0; i < n_toSave; i++){
             parents_brains.push(rockets[IndicesSorted[i]].brain);
+
         }
 
 

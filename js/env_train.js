@@ -25,9 +25,9 @@ const zoomStep = 0.1;
 
 // rockets options
 let n_rocket = 50;
-let n_toSave = 20;
+let n_parents = 5;
 let rockets = [];
-let brains_rk = [];
+let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
 let x_generation = 2000;
@@ -125,14 +125,13 @@ function createRockets() {
         rocket.initializeBrain();
         rocket.setHigh(FromRocketToGround + high_ground/2 );  
 
-        /*
+        
         // update new generation brains
         if(n_gen > 1){
             rocket.brain = brains_rk[i];
         }
-        */
+        
 
-        console.log("ngen = ", n_gen, "esite brain?", rocket.brain);
         
             
 
@@ -141,10 +140,12 @@ function createRockets() {
 
         
         // add noise
-
+        if(n_gen > 15){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        // Body.setAngularVelocity(rocket.rk, (Math.random()-0.5)*0.05 );
+        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.01 );
+        }
+
         
     }
 }
@@ -152,15 +153,6 @@ function createRockets() {
 function initWorld(){
 
 
-
-    // udate new generation brains
-    if(n_gen > 1){
-        // console.log("mixing brains..");
-        // console.log("if in initworld has brain?",rockets[0].brain, "n_gen: ", n_gen);
-        
-        brains_rk = UpdateBrains(rockets, scores, n_toSave, n_gen);
-        // console.log(brains_rk);
-    }
 
     // initialize scores
     for(let i = 0; i< n_rocket; i++){
@@ -306,8 +298,8 @@ function addMedianScoreData() {
     const average = array => array.reduce((a, b) => a + b) / array.length;
     const sorted = scores.toSorted().reverse();
     
-    // Take top n_toSave scores (or all if fewer available)
-    const topScores = sorted.slice(0, Math.min(n_toSave, sorted.length));
+    // Take top n_parents scores (or all if fewer available)
+    const topScores = sorted.slice(0, Math.min(n_parents, sorted.length));
     
     const mean_score = average(topScores);
     
@@ -332,8 +324,10 @@ slider.addEventListener('input', function() {
 });
 function start_timer(){
     clearInterval(timer);
-    timer = setInterval(() => {
+    timer = setInterval(async () => {
+
         n_gen = n_gen + 1;
+
         console.log("generation n: ", n_gen);
         /*
         get evaluation of performance
@@ -356,9 +350,16 @@ function start_timer(){
         
         // rockets[i].loadModel("data\local_data\models"); // to understand
         }
+
+        brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen);
+
+
+
         addMedianScoreData();
         
-        // console.log("scores: ",scores);
+
+
+        console.log("scores: ",scores);
         World.clear(world);
         Engine.clear(engine);
         initWorld();
