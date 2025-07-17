@@ -26,6 +26,12 @@ export class rocketBodies {
         this.distanceGround = 300;
         this.TuchedTheGround = false;
 
+        // to save score
+        this.score;
+
+        // fuel
+        this.fuel = 100;
+
         // Create a trapezoid below the rectangle
         const width = bottomwidth;
         const height = hhigh;
@@ -179,6 +185,11 @@ export class rocketBodies {
         if (this.brain && typeof this.brain.forward !== 'undefined') {
         if(!this.TuchedTheGround){
         const pre = this.brain.forward(this.getinput());
+        const coeficent = 1;
+        for (let i = 0; i < 3; i++) {
+            this.fuel -= pre[i] * coeficent;
+        }
+        // console.log(this.fuel);
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
@@ -186,6 +197,9 @@ export class rocketBodies {
     }
     }
 
+    loss_bigval(x) {
+    return (x * 0.1 / (1 + Math.abs(x * 0.1))) * 0.5 + 0.5;
+    }
     // score
     // max scores = 6
     getScore(velocityBeforeImpact = -1){
@@ -206,22 +220,29 @@ export class rocketBodies {
         // check angular velocity
         scale = 1;
         const angleV = this.rk.angularVelocity;
-        score += Math.exp(-Math.abs(angleV)) ;
+        score += Math.exp(-Math.abs(angleV*100)) ;
 
         // check orientation
         scale = 1;
         const angle = this.rk.angle;
         const normalizedAngle = (angle % (2 * Math.PI));
-        score += Math.exp(-Math.abs(normalizedAngle))*scale;
+        score += Math.exp(-Math.abs(normalizedAngle*100))*scale;
 
         // check velocity
-        scale = 1;
+        scale = 3;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact * velocityBeforeImpact) * scale;
+            score += Math.exp(-velocityBeforeImpact*100) * scale;
         }
         else{
             score += Math.exp(-Body.getSpeed(this.rk)) * scale;
         }
+
+        // check fuel
+        scale = 1;
+        score += this.loss_bigval(this.fuel);
+
+        // save score
+        this.score = score;
 
         return score; 
 
@@ -244,7 +265,7 @@ export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
         }
 
 
-        const child_brains = mixBrains(parents_brains, rockets.length, 0.1,n_gen);
+        const child_brains = mixBrains(parents_brains, scores, rockets.length, 0.1,n_gen);
         
         return child_brains;
 

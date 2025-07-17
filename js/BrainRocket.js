@@ -264,7 +264,7 @@ function rnd_n(N){
     return Math.floor(Math.random() * N);
 }
 
-export function mixBrains(brains_parents, n_child, mutationFactor,n_gen){
+export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen){
 
     const n_parents = brains_parents.length;
 

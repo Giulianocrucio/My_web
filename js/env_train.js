@@ -24,23 +24,28 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 50;
-let n_parents = 5;
+let n_rocket = 30;
+let n_parents = Math.floor(n_rocket*0.25);
 let rockets = [];
 let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
 let x_generation = 2000;
 
+// ground options
 let grounds = [];
 let only_ground;
-let width_ground = 500;
+let width_ground = 5000;
 let high_ground = 50;
 let scores = [];
 // initializa the scores to -1
 for(let i = 0; i< n_rocket; i++){
     scores.push(-1);
 }
+// save scores and best brains
+let bestscore = -1 ;
+let rocket_best_brain;
+let score_chart = [];
 
 // timer options
 let time_scale = 1;
@@ -138,7 +143,7 @@ function createRockets() {
         World.add(world, rocket.rk);
         rockets.push(rocket);
 
-        
+        Body.setAngle(rocket.rk, Math.PI/6 ); // 180° range
         // add noise
         if(n_gen > 15){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
@@ -283,15 +288,7 @@ options: {
     }
 }
 });
-function median(arr) {
-    const sorted = arr.slice().sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    if (sorted.length % 2 === 0) {
-        return (sorted[mid - 1] + sorted[mid]) / 2;
-    } else {
-        return sorted[mid];
-    }
-}
+
 function addMedianScoreData() {
     if (!scores || scores.length === 0) return;
     
@@ -302,7 +299,10 @@ function addMedianScoreData() {
     const topScores = sorted.slice(0, Math.min(n_parents, sorted.length));
     
     const mean_score = average(topScores);
-    
+    // save
+    score_chart.push(topScores);
+
+
     chart.data.labels.push(n_gen);
     chart.data.datasets[0].data.push(mean_score);
     
@@ -347,10 +347,19 @@ function start_timer(){
             if (scores[i] == -1) {
                 scores[i] = rockets[i].getScore();
             }
+
+            // save best performance rocket
+            if(rockets[i].score > bestscore){
+
+                rocket_best_brain = rockets[i];
+            }
         
         // rockets[i].loadModel("data\local_data\models"); // to understand
         }
 
+        rockets.push(rocket);
+        scores.push(bestscore);
+        
         brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen);
 
 
@@ -359,7 +368,7 @@ function start_timer(){
         
 
 
-        console.log("scores: ",scores);
+        console.log("max score: ", Math.max.apply(Math, scores));
         World.clear(world);
         Engine.clear(engine);
         initWorld();
