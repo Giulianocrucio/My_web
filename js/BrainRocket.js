@@ -263,6 +263,41 @@ for(let i = 0; i<100; i++){
 function rnd_n(N){
     return Math.floor(Math.random() * N);
 }
+function rouletteWheelSelect(scores) {
+  if (!Array.isArray(scores) || scores.length === 0) {
+    throw new Error("scores must be a non-empty array");
+  }
+
+  // 1. Find minimum score
+  const minScore = Math.min(...scores);
+
+  // 2. Shift all scores upward so that the minimum becomes slightly above 0
+  //    We add ε = 1e-6 to avoid zero total weight if all scores equal.
+  const epsilon = 1e-6;
+  const shifted = scores.map(s => s - minScore + epsilon);
+
+  // 3. Compute the cumulative sum array
+  const cumSum = [];
+  let total = 0;
+  for (let w of shifted) {
+    total += w;
+    cumSum.push(total);
+  }
+
+  // 4. Pick a uniform random number in [0, total)
+  const r = Math.random() * total;
+
+  // 5. Find first index where cumSum[i] > r
+  //    This is O(n); for large n you could binary-search.
+  for (let i = 0; i < cumSum.length; i++) {
+    if (r < cumSum[i]) {
+      return i;
+    }
+  }
+
+  // 6. (Numerical edge) fallback to last index
+  return scores.length - 1;
+}
 
 export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen){
 
@@ -281,7 +316,7 @@ export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen)
     let brains_children = [];
 
     // get the vectors
-    for(let i = 0; i<n_parents;i++){
+    for(let i = 0; i < n_parents; i++){
         vector_weight_parent.push(brains_parents[i].extractWeights())
     }
 
@@ -293,8 +328,8 @@ export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen)
 
 
         // select two random parents
-        const randomParents = [ vector_weight_parent[rnd_n(n_parents)],
-                                vector_weight_parent[rnd_n(n_parents)]];
+        const randomParents = [ vector_weight_parent[rouletteWheelSelect(scores)],
+                                vector_weight_parent[rouletteWheelSelect(scores)]];
 
         for(let i = 0; i<vector_weight_parent[0].length; i++){
             weights_child[i] = randomParents[rnd_n(2)][i];

@@ -24,18 +24,19 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 30;
-let n_parents = Math.floor(n_rocket*0.25);
+let n_rocket = 50;
+let n_parents = Math.floor(n_rocket*0.3);
 let rockets = [];
 let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
 let x_generation = 2000;
+let mutation_factor = 0.1;
 
 // ground options
 let grounds = [];
 let only_ground;
-let width_ground = 5000;
+let width_ground = 3000;
 let high_ground = 50;
 let scores = [];
 // initializa the scores to -1
@@ -143,9 +144,11 @@ function createRockets() {
         World.add(world, rocket.rk);
         rockets.push(rocket);
 
-        Body.setAngle(rocket.rk, Math.PI/6 ); // 180° range
+        Body.setAngle(rocket.rk, Math.PI/6 ); 
+        Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.0001 );
         // add noise
-        if(n_gen > 15){
+        if(n_gen > 1){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
         // Body.setAngularVelocity(rocket.rk, (Math.random())*0.01 );
@@ -360,7 +363,7 @@ function start_timer(){
         rockets.push(rocket);
         scores.push(bestscore);
         
-        brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen);
+        brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen, mutation_factor);
 
 
 

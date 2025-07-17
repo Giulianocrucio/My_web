@@ -253,19 +253,19 @@ export class rocketBodies {
     }
 
 }
-export async function  UpdateBrains(rockets, scores, n_toSave, n_gen){
+export async function  UpdateBrains(rockets, scores, n_toSave, n_gen, mutfact){
 
         const IndicesSorted = sortIndeces(scores);
         let parents_brains = [];
-
+        let scores_parents = [];
 
         for(let i = 0; i < n_toSave; i++){
             parents_brains.push(rockets[IndicesSorted[i]].brain);
-
+            scores_parents.push(scores[IndicesSorted[i]]);
         }
 
 
-        const child_brains = mixBrains(parents_brains, scores, rockets.length, 0.1,n_gen);
+        const child_brains = mixBrains(parents_brains, scores_parents, rockets.length, mutfact,n_gen);
         
         return child_brains;
 
