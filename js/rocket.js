@@ -26,6 +26,11 @@ export class rocketBodies {
         this.distanceGround = 300;
         this.TuchedTheGround = false;
 
+
+        // to get initial x pos
+        this.initial_posx;
+        this.in_the_world = false;
+
         // to save score
         this.score;
 
@@ -60,7 +65,7 @@ export class rocketBodies {
             },
             render: { fillStyle: 'red' },
             chamfer: { radius: 5 },
-            slop: 0.05,     // Helps with collision stability
+            slop: 0.01,     // Helps with collision stability
             friction: 0.25,
             restitution: 0.4
         };
@@ -152,22 +157,29 @@ export class rocketBodies {
 
     getinput(){
 
+        // get initial posx
+        if( ! this.in_the_world){
+            this.initial_posx = this.central_pos().x;
+            this.in_the_world = true;
+        }
+
         // Extract information from the Matter.js body
         const angle = this.rk.angle;
         const angularVelocity = this.rk.angularVelocity * 100 ;
-        const posX = 0;
+        const posX = this.central_pos().x - this.initial_posx;
 
         // Calculate derived values
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
         const distanceFromGround = (this.distanceGround - this.central_pos().y) / 300; 
 
-        // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, 0, distanceFromGround]
+        // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, posX, distanceFromGround]
         const bodyTensor = [
             cosAngle,
             sinAngle,
             angularVelocity,
-            distanceFromGround
+            distanceFromGround,
+            posX
         ]; 
         return bodyTensor;
     }
@@ -210,7 +222,7 @@ export class rocketBodies {
         }
 
         // distance from the ground
-        let scale = 1;
+        let scale = 3;
 
         // positive basis of the rocket when above ground
         const distanceFromGround = this.distanceGround - this.central_pos().y; 
@@ -235,13 +247,13 @@ export class rocketBodies {
         console.log("Angle from upright:", angleFromUpright, "=> Score added:",  Math.exp(-Math.abs(angleFromUpright) * 1000) * 3);
 
         // check velocity
-        scale = 3;
+        scale = 10;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact) * 3;
-            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", Math.exp(-velocityBeforeImpact) * 3);
+            score += Math.exp(-velocityBeforeImpact/5) * scale;
+            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", Math.exp(-velocityBeforeImpact/5) * scale);
         }
         else{
-            score += Math.exp(-Math.abs(Body.getVelocity(this.rk).y)) * scale;
+            score += Math.exp(-Math.abs(Body.getVelocity(this.rk).y)/5) * scale;
         }
 
         // check velocity x-axes
@@ -258,6 +270,14 @@ export class rocketBodies {
         if(velocityBeforeImpact != -1 && Math.abs(normalizedAngle - Math.PI) < 0.5) {
             score *= 0.01; // Penalità drastica per atterraggio sottosopra
         }
+
+        // check if it lands under the spawn 
+        scale = 1;
+        const offset_x = this.central_pos().x - this.initial_posx; 
+        const score_offset_x = Math.exp(-Math.abs(offset_x)/100)*scale;
+        score += score_offset_x;
+        console.log("x_offset:", offset_x, "score off: ",score_offset_x);
+
 
         // save score
         this.score = score;
