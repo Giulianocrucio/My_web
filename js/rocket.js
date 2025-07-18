@@ -167,7 +167,6 @@ export class rocketBodies {
             cosAngle,
             sinAngle,
             angularVelocity,
-            posX,
             distanceFromGround
         ]; 
         return bodyTensor;
@@ -216,25 +215,30 @@ export class rocketBodies {
         // positive basis of the rocket when above ground
         const distanceFromGround = this.distanceGround - this.central_pos().y; 
         score += Math.exp(-Math.abs(distanceFromGround)) * scale;
+        console.log("Distance from ground:", distanceFromGround, "=> Score added:",Math.exp(-Math.abs(distanceFromGround)) * scale);
 
         // check angular velocity
         scale = 1;
         const angleV = this.rk.angularVelocity;
         score += Math.exp(-Math.abs(angleV*100)) ;
+        console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100)));
 
         // check orientation
         const normalizedAngle = ((this.rk.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
         const uprightBonus = Math.cos(normalizedAngle) * 3; // + if up, - if down
         score += uprightBonus;
+        console.log("Normalized angle:", normalizedAngle, "=> Upright bonus:", uprightBonus);
         
         // penality for not being upright
         const angleFromUpright = Math.min(normalizedAngle, 2 * Math.PI - normalizedAngle);
         score += Math.exp(-Math.abs(angleFromUpright) * 1000) * 3;
+        console.log("Angle from upright:", angleFromUpright, "=> Score added:",  Math.exp(-Math.abs(angleFromUpright) * 1000) * 3);
 
         // check velocity
         scale = 3;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact*100) * 3;
+            score += Math.exp(-velocityBeforeImpact) * 3;
+            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", Math.exp(-velocityBeforeImpact) * 3);
         }
         else{
             score += Math.exp(-Math.abs(Body.getVelocity(this.rk).y)) * scale;
@@ -243,10 +247,12 @@ export class rocketBodies {
         // check velocity x-axes
         const velx = Math.abs(Body.getVelocity(this.rk).x);
         score += Math.exp(-Math.abs(velx));
+        console.log("Horizontal velocity:", velx, "=> Score added:", Math.exp(-Math.abs(velx)));
 
         // check fuel
         scale = 1;
         score += this.loss_bigval(this.fuel);
+        console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel));
 
         // big penalty if downright
         if(velocityBeforeImpact != -1 && Math.abs(normalizedAngle - Math.PI) < 0.5) {
@@ -255,9 +261,11 @@ export class rocketBodies {
 
         // save score
         this.score = score;
+        console.log("Final score:", score);
 
         
 
+        
         return score; 
 
     }

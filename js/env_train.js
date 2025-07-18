@@ -24,13 +24,13 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 100;
+let n_rocket = 80;
 let n_parents = Math.floor(n_rocket*0.3);
 let rockets = [];
 let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
-let x_generation = 2000;
+let x_generation = 3000;
 let mutation_factor = 0.3;
 
 // ground options
@@ -146,12 +146,12 @@ function createRockets() {
 
         Body.setAngle(rocket.rk, Math.PI/6 ); 
         Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        Body.setAngularVelocity(rocket.rk, (Math.random())*0.0001 );
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.0002 );
         // add noise
-        if(n_gen > 1){
+        if(n_gen > 20){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.01 );
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
         }
 
         

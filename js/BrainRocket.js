@@ -2,7 +2,7 @@
 
 // Neural Network: 5 inputs -> 2 hidden layers (64 neurons each, ReLU) -> 3 outputs [0,1]
 export class NNs {
-    constructor(layers = [5,16,16,3]) {
+    constructor(layers = [4,16,32,16,3]) {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
         this.layers = layers;
