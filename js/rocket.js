@@ -30,7 +30,7 @@ export class rocketBodies {
         this.score;
 
         // fuel
-        this.fuel = 100;
+        this.fuel = 300;
 
         // Create a trapezoid below the rectangle
         const width = bottomwidth;
@@ -201,7 +201,7 @@ export class rocketBodies {
     return (x * 0.1 / (1 + Math.abs(x * 0.1))) * 0.5 + 0.5;
     }
     // score
-    // max scores = 6
+    // max scores = ..
     getScore(velocityBeforeImpact = -1){
         let score = 0;
 
@@ -223,26 +223,40 @@ export class rocketBodies {
         score += Math.exp(-Math.abs(angleV*100)) ;
 
         // check orientation
-        scale = 1;
-        const angle = this.rk.angle;
-        const normalizedAngle = (angle % (2 * Math.PI));
-        score += Math.exp(-Math.abs(normalizedAngle*100))*scale;
+        const normalizedAngle = ((this.rk.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        const uprightBonus = Math.cos(normalizedAngle) * 3; // + if up, - if down
+        score += uprightBonus;
+        
+        // penality for not being upright
+        const angleFromUpright = Math.min(normalizedAngle, 2 * Math.PI - normalizedAngle);
+        score += Math.exp(-Math.abs(angleFromUpright) * 1000) * 3;
 
         // check velocity
         scale = 3;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact*100) * scale;
+            score += Math.exp(-velocityBeforeImpact*100) * 3;
         }
         else{
-            score += Math.exp(-Body.getSpeed(this.rk)) * scale;
+            score += Math.exp(-Math.abs(Body.getVelocity(this.rk).y)) * scale;
         }
+
+        // check velocity x-axes
+        const velx = Math.abs(Body.getVelocity(this.rk).x);
+        score += Math.exp(-Math.abs(velx));
 
         // check fuel
         scale = 1;
         score += this.loss_bigval(this.fuel);
 
+        // big penalty if downright
+        if(velocityBeforeImpact != -1 && Math.abs(normalizedAngle - Math.PI) < 0.5) {
+            score *= 0.01; // Penalità drastica per atterraggio sottosopra
+        }
+
         // save score
         this.score = score;
+
+        
 
         return score; 
 

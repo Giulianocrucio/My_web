@@ -24,14 +24,14 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 50;
+let n_rocket = 100;
 let n_parents = Math.floor(n_rocket*0.3);
 let rockets = [];
 let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
 let x_generation = 2000;
-let mutation_factor = 0.1;
+let mutation_factor = 0.3;
 
 // ground options
 let grounds = [];
@@ -246,7 +246,8 @@ Events.on(engine, 'beforeUpdate', () => {
    
     // remember the velocity of frame before in case of colliding
     framesV[0] = framesV[1];
-    framesV[1] = Body.getSpeed(rockets[i].rk);
+    framesV[1] = Math.abs(Body.getVelocity(rockets[i].rk).y);
+    // console.log(framesV);
 
     rockets[i].think();
 
@@ -269,7 +270,7 @@ type: 'line',
 data: {
     labels: [], // timestamps
     datasets: [{
-    label: 'Mean score of the best rockets',
+    label: 'Mean score of the best 5 rockets',
     data: [],
     borderColor: 'blue',
     borderWidth: 2,
@@ -298,8 +299,8 @@ function addMedianScoreData() {
     const average = array => array.reduce((a, b) => a + b) / array.length;
     const sorted = scores.toSorted().reverse();
     
-    // Take top n_parents scores (or all if fewer available)
-    const topScores = sorted.slice(0, Math.min(n_parents, sorted.length));
+    // Take top 5 scores (or all if fewer available)
+    const topScores = sorted.slice(0, Math.min(5, sorted.length));
     
     const mean_score = average(topScores);
     // save
@@ -381,3 +382,36 @@ function start_timer(){
     }, timer_duration); 
 }
 start_timer();
+
+// Mutation factor control
+document.getElementById('setMutationFactorBtn').addEventListener('click', () => {
+    const val = parseFloat(document.getElementById('mutationFactorInput').value);
+        mutation_factor = val;
+});
+
+// Number of rockets control
+document.getElementById('setNumRocketsBtn').addEventListener('click', () => {
+    const val = parseInt(document.getElementById('numRocketsInput').value, 10);
+        n_rocket = val;
+        n_parents = Math.floor(n_rocket * (save_percent / 100));
+        // Reset scores array to match new n_rocket
+        scores = [];
+        for (let i = 0; i < n_rocket; i++) scores.push(-1);
+        document.getElementById("n_rocket").textContent = `Number of rockets in the simulation: ${n_rocket}`;
+        // Restart simulation to apply changes
+        World.clear(world);
+        Engine.clear(engine);
+        initWorld();
+});
+
+// Percent to save control
+let save_percent = 20; // default value
+document.getElementById('setSavePercentBtn').addEventListener('click', () => {
+    const val = parseInt(document.getElementById('savePercentInput').value, 10);
+    if (val >= 0 && val <= 100) {
+        save_percent = val;
+        n_parents = Math.floor(n_rocket * (save_percent / 100));
+    } else {
+        alert('Percent to save must be between 0 and 100.');
+    }
+});
