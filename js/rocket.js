@@ -37,6 +37,9 @@ export class rocketBodies {
         // fuel
         this.fuel = 300;
 
+        // animations
+        this.propulsor_animation = false;
+
         // Create a trapezoid below the rectangle
         const width = bottomwidth;
         const height = hhigh;
@@ -194,8 +197,9 @@ export class rocketBodies {
 
     think(){
         if (this.brain && typeof this.brain.forward !== 'undefined') {
+           let pre;
         if(!this.TuchedTheGround){
-        const pre = this.brain.forward(this.getinput());
+        pre = this.brain.forward(this.getinput());
         const coeficent = 1;
         for (let i = 0; i < 3; i++) {
             this.fuel -= pre[i] * coeficent;
@@ -205,8 +209,14 @@ export class rocketBodies {
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
         }
+
+        // animation
+        if(this.propulsor_animation){
+            this.animation_prop(pre);
+        }
     }
     }
+
 
     loss_bigval(x) {
     return (x * 0.1 / (1 + Math.abs(x * 0.1))) * 0.5 + 0.5;

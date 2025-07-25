@@ -15,7 +15,10 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Events = Matter.Events;
 
-
+// hyperpamaters
+let mutation_factor = 0.2;
+let n_rocket = 100;
+let n_parents = Math.floor(n_rocket*0.4);
 
 // Render options
 let WIDTH = 1200 ;
@@ -24,14 +27,12 @@ let zoomLevel = 0.2;
 const zoomStep = 0.1;
 
 // rockets options
-let n_rocket = 100;
-let n_parents = Math.floor(n_rocket*0.4);
 let rockets = [];
 let brains_rk;
 let distanceFromRockets = 0;
 let FromRocketToGround = 2500;
 let x_generation = 3000;
-let mutation_factor = 0.2;
+
 
 // ground options
 let grounds = [];
