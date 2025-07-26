@@ -16,9 +16,10 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 
 // hyperpamaters
-let mutation_factor = 0.2;
+let mutation_factor = 0.1;
 let n_rocket = 100;
-let n_parents = Math.floor(n_rocket*0.4);
+let save_percent = 10;
+let n_parents = Math.floor(n_rocket*save_percent/100);
 
 // Render options
 let WIDTH = 1200 ;
@@ -391,6 +392,7 @@ document.getElementById('setMutationFactorBtn').addEventListener('click', () => 
         mutation_factor = val;
 });
 
+/*
 // Number of rockets control
 document.getElementById('setNumRocketsBtn').addEventListener('click', () => {
     const val = parseInt(document.getElementById('numRocketsInput').value, 10);
@@ -405,14 +407,15 @@ document.getElementById('setNumRocketsBtn').addEventListener('click', () => {
         Engine.clear(engine);
         initWorld();
 });
+*/
 
 // Percent to save control
-let save_percent = 20; // default value
 document.getElementById('setSavePercentBtn').addEventListener('click', () => {
-    const val = parseInt(document.getElementById('savePercentInput').value, 10);
+    const val = parseFloat(document.getElementById('savePercentInput').value);
     if (val >= 0 && val <= 100) {
         save_percent = val;
         n_parents = Math.floor(n_rocket * (save_percent / 100));
+        console.log("number of parents:", n_parents);
     } else {
         alert('Percent to save must be between 0 and 100.');
     }
