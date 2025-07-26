@@ -296,24 +296,26 @@ options: {
 }
 });
 
-function addMedianScoreData() {
+function addmeanScore() {
     if (!scores || scores.length === 0) return;
-    
+
+    // Filter out invalid scores
+    const validScores = scores.filter(s => s >= 0);
+    if (validScores.length === 0) return;
+
     const average = array => array.reduce((a, b) => a + b) / array.length;
-    const sorted = scores.toSorted().reverse();
-    
-    // Take top 5 scores (or all if fewer available)
-    const topScores = sorted.slice(0, Math.min(5, sorted.length));
-    
+    const sorted = validScores.toSorted().reverse();
+
+    // Take top n scores (or all if fewer available)
+    const topScores = sorted.slice(0, Math.min(10, sorted.length));
+
     const mean_score = average(topScores);
     // save
     score_chart.push(topScores);
 
-
     chart.data.labels.push(n_gen);
     chart.data.datasets[0].data.push(mean_score);
-    
-    
+
     chart.update();
 }
 
@@ -371,7 +373,7 @@ function start_timer(){
 
 
 
-        addMedianScoreData();
+        addmeanScore();
         
 
 

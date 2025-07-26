@@ -228,61 +228,39 @@ export class rocketBodies {
 
         // if impact with the ground
         if(velocityBeforeImpact != -1){
-            score = 2;
+            score += 5;
         }
-
-        // distance from the ground
-        let scale = 3;
-
-        // positive basis of the rocket when above ground
-        const distanceFromGround = this.distanceGround - this.central_pos().y; 
-        score += Math.exp(-Math.abs(distanceFromGround)) * scale;
-        console.log("Distance from ground:", distanceFromGround, "=> Score added:",Math.exp(-Math.abs(distanceFromGround)) * scale);
 
         // check angular velocity
-        scale = 1;
+        let scale = 0;
         const angleV = this.rk.angularVelocity;
-        score += Math.exp(-Math.abs(angleV*100)) ;
-        console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100)));
+        score += Math.exp(-Math.abs(angleV*100))*scale ;
+        console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
 
         // check orientation
-        const normalizedAngle = ((this.rk.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        const uprightBonus = Math.cos(normalizedAngle) * 3; // + if up, - if down
+        scale = 10;
+        const Angle = this.rk.angle;
+        const uprightBonus = Math.exp(-Math.abs(Angle)/3)*scale; 
         score += uprightBonus;
-        console.log("Normalized angle:", normalizedAngle, "=> Upright bonus:", uprightBonus);
+        console.log("Normalized angle:", Angle, "=> Upright bonus:", uprightBonus);
         
-        // penality for not being upright
-        const angleFromUpright = Math.min(normalizedAngle, 2 * Math.PI - normalizedAngle);
-        score += Math.exp(-Math.abs(angleFromUpright) * 1000) * 3;
-        console.log("Angle from upright:", angleFromUpright, "=> Score added:",  Math.exp(-Math.abs(angleFromUpright) * 1000) * 3);
 
         // check velocity
-        scale = 10;
+        scale = 5;
         if(velocityBeforeImpact != -1){
-            score += Math.exp(-velocityBeforeImpact/5) * scale;
-            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", Math.exp(-velocityBeforeImpact/5) * scale);
+            const vel_bunus = Math.exp(-velocityBeforeImpact/5) * scale
+            score += vel_bunus;
+            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", vel_bunus);
         }
-        else{
-            score += Math.exp(-Math.abs(Body.getVelocity(this.rk).y)/5) * scale;
-        }
-
-        // check velocity x-axes
-        const velx = Math.abs(Body.getVelocity(this.rk).x);
-        score += Math.exp(-Math.abs(velx));
-        console.log("Horizontal velocity:", velx, "=> Score added:", Math.exp(-Math.abs(velx)));
 
         // check fuel
-        scale = 1;
+        scale = 0;
         score += this.loss_bigval(this.fuel);
         console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel));
 
-        // big penalty if downright
-        if(velocityBeforeImpact != -1 && Math.abs(normalizedAngle - Math.PI) < 0.5) {
-            score *= 0.01; // Penalità drastica per atterraggio sottosopra
-        }
 
         // check if it lands under the spawn 
-        scale = 1;
+        scale = 0;
         const offset_x = this.central_pos().x - this.initial_posx; 
         const score_offset_x = Math.exp(-Math.abs(offset_x)/100)*scale;
         score += score_offset_x;
