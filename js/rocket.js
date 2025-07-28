@@ -370,3 +370,20 @@ export function sortIndeces(input_vec) {
     }
     return indeces;
 }
+
+    let currentPhase = 1;
+
+    // Seleziona il bottone per riferimento
+    const phaseButton = document.getElementById("phaseButton");
+
+    // Aggiungi il listener per l'evento "click"
+    phaseButton.addEventListener("click", () => {
+        // Incrementa la fase
+        currentPhase = currentPhase % 4 + 1;
+
+        // Aggiorna il testo del bottone
+        phaseButton.textContent = "Phase: " + currentPhase;
+
+        // (facoltativo) puoi usare currentPhase anche in altre parti del tuo codice
+        console.log("Phase switched to:", currentPhase);
+    });
