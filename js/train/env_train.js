@@ -17,8 +17,8 @@ const Events = Matter.Events;
 
 // hyperpamaters
 let mutation_factor = 1;
-let n_rocket = 100;
-let save_percent = 10;
+let n_rocket = 1000;
+let save_percent = 20;
 let n_parents = Math.floor(n_rocket*save_percent/100);
 
 // Render options
@@ -148,10 +148,22 @@ function createRockets() {
 
 
         // add noise
-        if(n_gen > 20){
+        if(n_gen > 0){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
-        // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
+        // Body.setVelocity(rocket.rk, { x: Math.random()*1 - 0.5, y:0 });
+        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.02 - 0.01 );
+        Body.setAngle(rocket.rk, Math.PI/6 ); 
+        }
+        if(n_gen > 1000){
+        // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        Body.setVelocity(rocket.rk, { x: Math.random()*20 - 10, y: Math.random()*20 - 10});
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.02 - 0.01 );
+        // Body.setAngle(rocket.rk, Math.PI/6 ); 
+        }
+        if(n_gen > 1000){
+        // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        Body.setVelocity(rocket.rk, { x: Math.random()*20 - 10, y: Math.random()*20 - 10});
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.04 - 0.02 );
         // Body.setAngle(rocket.rk, Math.PI/6 ); 
         }
 
@@ -280,13 +292,22 @@ data: {
                 tension: 0.1
             },
             {
-                label: 'Mean of Top 10 Scores',
+                label: 'Mean of Top 10%',
                 borderColor: 'red',
                 backgroundColor: 'red',
                 data: [],
                 fill: false,
                 tension: 0.1
+            },
+            {
+                label: 'Mean of Top 50%',
+                borderColor: 'green',
+                backgroundColor: 'green',
+                data: [],
+                fill: false,
+                tension: 0.1
             }
+            
         ]
 },
 options: {
@@ -309,9 +330,10 @@ function addmeanScore() {
     if (!scores || scores.length === 0) return;
 
     // Filter out invalid scores
-    const validScores = scores.filter(s => s >= 0);
-    if (validScores.length === 0) return;
+    // const validScores = scores.filter(s => s >= 0);
+    // if (validScores.length === 0) return;
 
+    const validScores = scores;
     const average = array => array.reduce((a, b) => a + b, 0) / array.length;
     const sorted = [...validScores].sort((a, b) => b - a); // descending
 
@@ -321,11 +343,19 @@ function addmeanScore() {
     chart.data.labels.push(n_gen);
     chart.data.datasets[0].data.push(overallMean);
 
-    // Save top n mean
-    const top_num = 10;
-    const topn = sorted.slice(0, Math.min(top_num, sorted.length));
-    const topnMean = average(topn);
+    // Save top 10% mean
+    let percent_to_disply = 10; // percent
+    let to_display = Math.floor(validScores.length*percent_to_disply/100);
+    let topn = sorted.slice(0, Math.min(to_display, sorted.length));
+    let topnMean = average(topn);
     chart.data.datasets[1].data.push(topnMean);
+
+    // Save top 50% mean
+    percent_to_disply = 50; // percent
+    to_display = Math.floor(validScores.length*percent_to_disply/100);
+    topn = sorted.slice(0, Math.min(to_display, sorted.length));
+    topnMean = average(topn);
+    chart.data.datasets[2].data.push(topnMean);
 
     chart.update();
 }
@@ -378,8 +408,12 @@ function start_timer(){
         // rockets[i].loadModel("data\local_data\models"); // to understand
         }
 
-        rockets.push(rocket);
-        scores.push(bestscore);
+        if(n_gen == 2){
+            rocket_best_brain.saveModel("best_model");
+            rocket_best_brain.loadModel("best_model"); 
+        }
+
+
         
         brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen, mutation_factor);
 
@@ -433,4 +467,17 @@ document.getElementById('setSavePercentBtn').addEventListener('click', () => {
     } else {
         alert('Percent to save must be between 0 and 100.');
     }
+});
+
+document.getElementById('modelFileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const modelData = JSON.parse(e.target.result);
+        rocket_best_brain.brain.layers = modelData.layers;
+        rocket_best_brain.brain.loadWeights(modelData.weights);
+        console.log("Model loaded from file!");
+    };
+    reader.readAsText(file);
 });

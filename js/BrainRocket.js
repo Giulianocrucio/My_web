@@ -1,8 +1,8 @@
 
 
-// Neural Network: 5 inputs -> 2 hidden layers (64 neurons each, ReLU) -> 3 outputs [0,1]
+// Neural Network:  inputs ->  hidden layers (ReLU) -> 3 outputs [0,1]
 export class NNs {
-    constructor(layers = [5,16,32,16,3]) {
+    constructor(layers = [5,16,16,3]) {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
         this.layers = layers;
@@ -116,6 +116,40 @@ export class NNs {
         return this.weightsToVector();
     }
     
+    saveModelToLocalStorage(key = "my_nn_model") {
+        const modelData = {
+            layers: this.layers,
+            weights: this.extractWeights()
+        };
+        localStorage.setItem(key, JSON.stringify(modelData));
+    }
+
+    loadModelFromLocalStorage(key = "my_nn_model") {
+        const jsonData = localStorage.getItem(key);
+        if (!jsonData) throw new Error("No model found in localStorage");
+        const modelData = JSON.parse(jsonData);
+        if (!Array.isArray(modelData.layers) || !Array.isArray(modelData.weights)) {
+            throw new Error('Invalid model format');
+        }
+        this.layers = modelData.layers;
+        this.createNetwork();
+        this.loadWeights(modelData.weights);
+    }
+
+    saveModelToFile(filename = "model.json") {
+        const modelData = {
+            layers: this.brain.layers,
+            weights: this.brain.extractWeights()
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(modelData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", filename);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
     loadWeights(weightsVector) {
         // Load weights from a flat array
         if (!Array.isArray(weightsVector)) {
@@ -299,7 +333,7 @@ function rouletteWheelSelect(scores) {
   return scores.length - 1;
 }
 
-export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen){
+export async function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen){
 
     const n_parents = brains_parents.length;
 
@@ -341,10 +375,12 @@ export function mixBrains(brains_parents, scores, n_child, mutationFactor,n_gen)
     // compute mutation
     for(let k = 0; k<n_child ; k++){
 
+        const mutation_per_child = ((Math.random()*0.5)+0.5)*mutationFactor;
+
         for(let i = 0; i<vector_weight_parent[0].length; i++){
             
             // uniformly choosen in [-mutationFactor, mutationFactor]
-            vector_weight_child[k][i] += (Math.random() * 2 -1) * mutationFactor;
+            vector_weight_child[k][i] += (Math.random() * 2 -1) * mutation_per_child;
 
         }
 
