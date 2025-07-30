@@ -1,6 +1,6 @@
-import { rocketBodies } from './rocket.js';
-import { sortIndeces } from './rocket.js';
-import { UpdateBrains } from './rocket.js';
+import { rocketBodies } from '../rocket.js';
+import { sortIndeces } from '../rocket.js';
+import { UpdateBrains } from '../rocket.js';
 
 
 
@@ -16,7 +16,7 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 
 // hyperpamaters
-let mutation_factor = 0.1;
+let mutation_factor = 1;
 let n_rocket = 100;
 let save_percent = 10;
 let n_parents = Math.floor(n_rocket*save_percent/100);
@@ -38,7 +38,7 @@ let x_generation = 3000;
 // ground options
 let grounds = [];
 let only_ground;
-let width_ground = 3500;
+let width_ground = 5000;
 let high_ground = 50;
 let scores = [];
 // initializa the scores to -1
@@ -148,13 +148,11 @@ function createRockets() {
 
 
         // add noise
-        if(n_gen > 0){
+        if(n_gen > 20){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
         // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
-        Body.setAngle(rocket.rk, Math.PI/6 ); 
-        Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        Body.setAngularVelocity(rocket.rk, (Math.random())*0.002 );
+        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
+        // Body.setAngle(rocket.rk, Math.PI/6 ); 
         }
 
         
@@ -272,13 +270,24 @@ const chart = new Chart(ctx, {
 type: 'line',
 data: {
     labels: [], // timestamps
-    datasets: [{
-    label: 'Mean score of the best 5 rockets',
-    data: [],
-    borderColor: 'blue',
-    borderWidth: 2,
-    fill: false,
-    }]
+    datasets: [
+            {
+                label: 'Mean of All Scores',
+                borderColor: 'blue',
+                backgroundColor: 'blue',
+                data: [],
+                fill: false,
+                tension: 0.1
+            },
+            {
+                label: 'Mean of Top 10 Scores',
+                borderColor: 'red',
+                backgroundColor: 'red',
+                data: [],
+                fill: false,
+                tension: 0.1
+            }
+        ]
 },
 options: {
     responsive: false,
@@ -303,21 +312,24 @@ function addmeanScore() {
     const validScores = scores.filter(s => s >= 0);
     if (validScores.length === 0) return;
 
-    const average = array => array.reduce((a, b) => a + b) / array.length;
-    const sorted = validScores.toSorted().reverse();
+    const average = array => array.reduce((a, b) => a + b, 0) / array.length;
+    const sorted = [...validScores].sort((a, b) => b - a); // descending
 
-    // Take top n scores (or all if fewer available)
-    const topScores = sorted.slice(0, Math.min(10, sorted.length));
 
-    const mean_score = average(topScores);
-    // save
-    score_chart.push(topScores);
-
+    // Save original mean
+    const overallMean = average(sorted);
     chart.data.labels.push(n_gen);
-    chart.data.datasets[0].data.push(mean_score);
+    chart.data.datasets[0].data.push(overallMean);
+
+    // Save top n mean
+    const top_num = 10;
+    const topn = sorted.slice(0, Math.min(top_num, sorted.length));
+    const topnMean = average(topn);
+    chart.data.datasets[1].data.push(topnMean);
 
     chart.update();
 }
+
 
 window.timeScale = 1.0;
 const slider = document.getElementById('timeScaleSlider');

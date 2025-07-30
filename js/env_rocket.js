@@ -13,8 +13,15 @@ const Events = Matter.Events;
 // Render options
 let WIDTH = 1200 ;
 let HIGH = 600 ;
-let zoomLevel = 0.5;
+
+// Set zoomLevel and zoomStep to match env_train.js
+let zoomLevel = 0.2;
 const zoomStep = 0.1;
+
+// --- Match ground and rocket positions to env_train.js ---
+const FromRocketToGround = 2500;
+const high_ground = 50;
+const width_ground = 5000;
 
 // Particle system manager
 const particles = [];
@@ -75,13 +82,19 @@ const render = Render.create({
     }
 });
 
-// Create ground
-const ground = Bodies.rectangle(500 + WIDTH / 2, HIGH + 500, 2000, 40, { 
-    isStatic: true,
-    render: {
-        fillStyle: '#4a4a6a'
+// Create ground (match env_train.js)
+const ground = Bodies.rectangle(
+    3000, // x position (x_generation in env_train.js)
+    50 + FromRocketToGround, // y position
+    width_ground,
+    high_ground,
+    { 
+        isStatic: true,
+        render: {
+            fillStyle: '#4a4a6a'
+        }
     }
-});
+);
 
 // Function to add a new box
 function addBox() {
@@ -107,7 +120,8 @@ function reset() {
 }
 
 function createRocket() {
-    rocket = new rocketBodies(400, 20);
+    // Place rocket at same x/y as env_train.js
+    rocket = new rocketBodies(3000, 50); // x_generation, 50
     rocketB = rocket.rk;
 
     // Set slop on all rocket parts
@@ -325,6 +339,7 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+// Set initial zoom transform to match env_train.js
 canvas.getContext("2d").setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);
 const runner = Matter.Runner.create();
 Matter.Runner.run(runner, engine);
