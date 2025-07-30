@@ -148,13 +148,11 @@ function createRockets() {
 
 
         // add noise
-        if(n_gen > 0){
+        if(n_gen > 20){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
-        Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        //Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
-        //Body.setAngle(rocket.rk, Math.PI/6 ); 
-        //Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        //Body.setAngularVelocity(rocket.rk, (Math.random())*0.002 );
+        // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
+        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
+        // Body.setAngle(rocket.rk, Math.PI/6 ); 
         }
 
         
@@ -269,10 +267,10 @@ Events.on(engine, 'beforeUpdate', () => {
 const ctx = document.getElementById('myChart').getContext('2d');
 
 const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: [],
-        datasets: [
+type: 'line',
+data: {
+    labels: [], // timestamps
+    datasets: [
             {
                 label: 'Mean of All Scores',
                 borderColor: 'blue',
@@ -290,24 +288,21 @@ const chart = new Chart(ctx, {
                 tension: 0.1
             }
         ]
+},
+options: {
+    responsive: false,
+    animation: false,
+    scales: {
+    x: {
+        title: { display: true, text: 'generation' }
     },
-    options: {
-        responsive: true,
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    // text: 'Generation'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Score'
-                }
-            }
-        }
+    y: {
+        title: { display: true, text: 'Value' },
+        suggestedMin: 0,
+        suggestedMax: 0.5
     }
+    }
+}
 });
 
 function addmeanScore() {

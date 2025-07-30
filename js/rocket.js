@@ -36,7 +36,8 @@ export class rocketBodies {
 
         // fuel
         this.fuel = 300;
-
+        this.max_fuel = 300;
+        this.step_fuel = 2;
         // animations
         this.propulsor_animation = false;
 
@@ -200,7 +201,7 @@ export class rocketBodies {
            let pre;
         if(!this.TuchedTheGround){
         pre = this.brain.forward(this.getinput());
-        const coeficent = 1;
+        const coeficent = this.step_fuel;
         for (let i = 0; i < 3; i++) {
             this.fuel -= pre[i] * coeficent;
         }
@@ -219,8 +220,24 @@ export class rocketBodies {
 
 
     loss_bigval(x) {
-    return (x * 0.1 / (1 + Math.abs(x * 0.1))) * 0.5 + 0.5;
+    // return (x * 0.1 / (1 + Math.abs(x * 0.1))) * 0.5 + 0.5;
+        return Math.min(
+            Math.exp(x)/2,
+            (x/(2*this.max_fuel))+0.5
+        )
     }
+    score_velx(x){
+    const absX = Math.abs(x);
+    return Math.max(
+        0,
+        -absX + 2,
+        -absX / 3 + 3,
+        -absX + 5,
+        -absX * 10 + 10,
+        -absX * 1000 + 15,
+        Math.exp(-absX*10)*15
+    )/15;
+}
     // score
     // max scores = ..
     getScore(velocityBeforeImpact = -1){
@@ -238,25 +255,28 @@ export class rocketBodies {
         console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
 
         // check orientation
-        scale = 10;
-        const Angle = this.rk.angle;
-        const uprightBonus = Math.exp(-Math.abs(Angle)/3)*scale; 
+        scale = 15;
+        const Angle = Math.abs(this.rk.angle);
+        let uprightBonus = Math.exp(-Angle/3)*scale; 
+        if(Angle > Math.PI / 2){
+            uprightBonus = -100;
+        }
         score += uprightBonus;
         console.log("Normalized angle:", Angle, "=> Upright bonus:", uprightBonus);
         
 
         // check velocity
-        scale = 5;
+        scale = 150;
         if(velocityBeforeImpact != -1){
-            const vel_bunus = Math.exp(-velocityBeforeImpact/5) * scale
+            const vel_bunus = this.score_velx(velocityBeforeImpact)*scale;
             score += vel_bunus;
             console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", vel_bunus);
         }
 
         // check fuel
-        scale = 0;
-        score += this.loss_bigval(this.fuel);
-        console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel));
+        scale = 3;
+        score += this.loss_bigval(this.fuel)*scale;
+        console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel))*scale;
 
 
         // check if it lands under the spawn 
@@ -371,6 +391,7 @@ export function sortIndeces(input_vec) {
     return indeces;
 }
 
+/*
     let currentPhase = 1;
 
     const phaseButton = document.getElementById("phaseButton");
@@ -381,3 +402,4 @@ export function sortIndeces(input_vec) {
 
         phaseButton.textContent = "Phase: " + currentPhase;
     });
+    */
