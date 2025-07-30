@@ -2,7 +2,7 @@
 
 // Neural Network:  inputs ->  hidden layers (ReLU) -> 3 outputs [0,1]
 export class NNs {
-    constructor(layers = [5,16,16,3]) {
+    constructor(layers = [5,16,32,16,3]) {
         // layers is an array representing the number of neurons in each layer
         // e.g., [3, 4, 2] means 3 input neurons, 4 hidden neurons, 2 output neurons
         this.layers = layers;
@@ -172,19 +172,6 @@ export class NNs {
         this.biases = biases;
     }
     
-    saveWeights(path) {
-        // Save weights to a file (Node.js environment)
-        const fs = require('fs');
-        const weightsVector = this.extractWeights();
-        
-        try {
-            const jsonData = JSON.stringify(weightsVector, null, 2);
-            fs.writeFileSync(path, jsonData, 'utf8');
-            console.log(`Weights saved to ${path}`);
-        } catch (error) {
-            throw new Error(`Failed to save weights: ${error.message}`);
-        }
-    }
     
     getWeights(path) {
         // Load weights from a file and return the flat array (Node.js environment)

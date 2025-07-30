@@ -148,9 +148,9 @@ function createRockets() {
 
 
         // add noise
-        if(n_gen > 0){
+        if(n_gen > 10){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
-        // Body.setVelocity(rocket.rk, { x: Math.random()*1 - 0.5, y:0 });
+        Body.setVelocity(rocket.rk, { x: Math.random()*0.1 - 0.05, y:0 });
         // Body.setAngularVelocity(rocket.rk, (Math.random())*0.02 - 0.01 );
         Body.setAngle(rocket.rk, Math.PI/6 ); 
         }
@@ -400,17 +400,12 @@ function start_timer(){
             }
 
             // save best performance rocket
-            if(rockets[i].score > bestscore){
+            if(rockets[i].score > bestscore && n_gen > 20){
 
                 rocket_best_brain = rockets[i];
+                bestscore = rocket_best_brain.score;
             }
         
-        // rockets[i].loadModel("data\local_data\models"); // to understand
-        }
-
-        if(n_gen == 2){
-            rocket_best_brain.saveModel("best_model");
-            rocket_best_brain.loadModel("best_model"); 
         }
 
 
@@ -477,15 +472,3 @@ export function save_best_model() {
 
 window.save_best_model = save_best_model;
 
-document.getElementById('modelFileInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const modelData = JSON.parse(e.target.result);
-        rocket_best_brain.brain.layers = modelData.layers;
-        rocket_best_brain.brain.loadWeights(modelData.weights);
-        console.log("Model loaded from file!");
-    };
-    reader.readAsText(file);
-});

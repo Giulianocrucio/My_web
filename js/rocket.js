@@ -192,12 +192,19 @@ export class rocketBodies {
         this.brain = new NNs();
     }
 
-
+    getoutput(){
+        let out = this.brain.forward(this.getinput());
+        return out;
+    }
+    hasTuchedTheGround(){
+        this.TuchedTheGround = true;
+    }
     think(){
         if (this.brain && typeof this.brain.forward !== 'undefined') {
            let pre;
         if(!this.TuchedTheGround){
-        pre = this.brain.forward(this.getinput());
+            console.log(this.TuchedTheGround);
+        pre = this.getoutput();
         const coeficent = this.step_fuel;
         for (let i = 0; i < 3; i++) {
             this.fuel -= pre[i] * coeficent;
@@ -206,11 +213,6 @@ export class rocketBodies {
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
-        }
-
-        // animation
-        if(this.propulsor_animation){
-            this.animation_prop(pre);
         }
     }
     }
@@ -253,7 +255,7 @@ export class rocketBodies {
         // console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
 
         // check velocity x
-        scale = 2;
+        scale = 10;
         const velx = Math.abs(Body.getVelocity(this.rk).x);
         score += this.score_velx(velx)*scale ;
         // console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
@@ -279,16 +281,21 @@ export class rocketBodies {
         
 
         // check velocity
-        scale = 200;
+        scale = 300;
         if(velocityBeforeImpact != -1){
-            const vel_bunus = this.score_velx(velocityBeforeImpact)*scale;
+            let vel_bunus = this.score_velx(velocityBeforeImpact)*scale;
+            if(velocityBeforeImpact > 10){
+                vel_bunus = -20;
+            }
+
             score += vel_bunus;
-            // console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", vel_bunus);
+            console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", vel_bunus);
         }
 
         // check fuel
-        scale = 30;
-        score += this.loss_bigval(this.fuel)*scale;
+        scale = 2;
+        let bonusfuel = this.loss_bigval(this.fuel)*scale;
+        score += bonusfuel;
         // console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel))*scale;
 
 
