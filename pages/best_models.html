@@ -4,7 +4,7 @@
     <link rel="icon" href="data:;base64,=">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Train environment</title>
+    <title>Best rockets</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -84,27 +84,12 @@
             <input type="range" id="timeScaleSlider" min="1" max="4" step="0.1" value="1" style="width:100px;">
             <span id="timeScaleValue">1.0</span>
         </div>
-        <div style="margin-bottom: 8px;">
-            <label for="mutationFactorInput" style="font-size:15px;">Mutation factor: (max 10)</label>
-            <input type="number" id="mutationFactorInput" min="0" max="10" step="0.01" value="" style="width:70px; margin-left:8px;">
-            <button id="setMutationFactorBtn" class="small-btn">Set</button>
-        </div>
-        <div>
-            <label for="savePercentInput" style="font-size:15px;">Percent to save:</label>
-            <input type="number" id="savePercentInput" min="0" max="100" step="1" value="" style="width:70px; margin-left:8px;">%
-            <button id="setSavePercentBtn" class="small-btn">Set</button>
-        </div>
-        <div style="margin-bottom: 8px;">
-            <button id="phaseButton">Phase: 1</button>
-        </div>
     </div>
     <div class="key-info">Use I, O keys to contorl the zoom</div>
     <div class="key-info">Ctrl + R to restart the simulation</div>
     <canvas id="canvas" width="1200" height="800"></canvas>
     
-    <script type="module" src="../js/train/env_train.js"></script>
+    <script type="module" src="../js/best_models_page.js"></script>
     <div class="key-info" id="n_rocket"></div>
-    <canvas id="myChart" width="600" height="300"></canvas>
-    <button onclick="save_best_model()">Download best model</button>
 </body>
 </html>

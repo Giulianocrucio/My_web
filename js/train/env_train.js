@@ -17,8 +17,8 @@ const Events = Matter.Events;
 
 // hyperpamaters
 let mutation_factor = 1;
-let n_rocket = 100;
-let save_percent = 10;
+let n_rocket = 1000;
+let save_percent = 20;
 let n_parents = Math.floor(n_rocket*save_percent/100);
 
 // Render options
@@ -148,10 +148,22 @@ function createRockets() {
 
 
         // add noise
-        if(n_gen > 20){
+        if(n_gen > 10){
         // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
-        // Body.setVelocity(rocket.rk, { x: Math.random() * 2 - 1, y: 0 });
-        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.001 );
+        Body.setVelocity(rocket.rk, { x: Math.random()*0.1 - 0.05, y:0 });
+        // Body.setAngularVelocity(rocket.rk, (Math.random())*0.02 - 0.01 );
+        Body.setAngle(rocket.rk, Math.PI/6 ); 
+        }
+        if(n_gen > 1000){
+        // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        Body.setVelocity(rocket.rk, { x: Math.random()*20 - 10, y: Math.random()*20 - 10});
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.02 - 0.01 );
+        // Body.setAngle(rocket.rk, Math.PI/6 ); 
+        }
+        if(n_gen > 1000){
+        // Body.setAngle(rocket.rk, Math.random() * Math.PI - Math.PI/2 ); // 180° range
+        Body.setVelocity(rocket.rk, { x: Math.random()*20 - 10, y: Math.random()*20 - 10});
+        Body.setAngularVelocity(rocket.rk, (Math.random())*0.04 - 0.02 );
         // Body.setAngle(rocket.rk, Math.PI/6 ); 
         }
 
@@ -280,13 +292,22 @@ data: {
                 tension: 0.1
             },
             {
-                label: 'Mean of Top 10 Scores',
+                label: 'Mean of Top 10%',
                 borderColor: 'red',
                 backgroundColor: 'red',
                 data: [],
                 fill: false,
                 tension: 0.1
+            },
+            {
+                label: 'Mean of Top 50%',
+                borderColor: 'green',
+                backgroundColor: 'green',
+                data: [],
+                fill: false,
+                tension: 0.1
             }
+            
         ]
 },
 options: {
@@ -309,9 +330,10 @@ function addmeanScore() {
     if (!scores || scores.length === 0) return;
 
     // Filter out invalid scores
-    const validScores = scores.filter(s => s >= 0);
-    if (validScores.length === 0) return;
+    // const validScores = scores.filter(s => s >= 0);
+    // if (validScores.length === 0) return;
 
+    const validScores = scores;
     const average = array => array.reduce((a, b) => a + b, 0) / array.length;
     const sorted = [...validScores].sort((a, b) => b - a); // descending
 
@@ -321,11 +343,19 @@ function addmeanScore() {
     chart.data.labels.push(n_gen);
     chart.data.datasets[0].data.push(overallMean);
 
-    // Save top n mean
-    const top_num = 10;
-    const topn = sorted.slice(0, Math.min(top_num, sorted.length));
-    const topnMean = average(topn);
+    // Save top 10% mean
+    let percent_to_disply = 10; // percent
+    let to_display = Math.floor(validScores.length*percent_to_disply/100);
+    let topn = sorted.slice(0, Math.min(to_display, sorted.length));
+    let topnMean = average(topn);
     chart.data.datasets[1].data.push(topnMean);
+
+    // Save top 50% mean
+    percent_to_disply = 50; // percent
+    to_display = Math.floor(validScores.length*percent_to_disply/100);
+    topn = sorted.slice(0, Math.min(to_display, sorted.length));
+    topnMean = average(topn);
+    chart.data.datasets[2].data.push(topnMean);
 
     chart.update();
 }
@@ -370,16 +400,15 @@ function start_timer(){
             }
 
             // save best performance rocket
-            if(rockets[i].score > bestscore){
+            if(rockets[i].score > bestscore && n_gen > 20){
 
                 rocket_best_brain = rockets[i];
+                bestscore = rocket_best_brain.score;
             }
         
-        // rockets[i].loadModel("data\local_data\models"); // to understand
         }
 
-        rockets.push(rocket);
-        scores.push(bestscore);
+
         
         brains_rk = await UpdateBrains(rockets, scores, n_parents, n_gen, mutation_factor);
 
@@ -406,22 +435,6 @@ document.getElementById('setMutationFactorBtn').addEventListener('click', () => 
         mutation_factor = val;
 });
 
-/*
-// Number of rockets control
-document.getElementById('setNumRocketsBtn').addEventListener('click', () => {
-    const val = parseInt(document.getElementById('numRocketsInput').value, 10);
-        n_rocket = val;
-        n_parents = Math.floor(n_rocket * (save_percent / 100));
-        // Reset scores array to match new n_rocket
-        scores = [];
-        for (let i = 0; i < n_rocket; i++) scores.push(-1);
-        document.getElementById("n_rocket").textContent = `Number of rockets in the simulation: ${n_rocket}`;
-        // Restart simulation to apply changes
-        World.clear(world);
-        Engine.clear(engine);
-        initWorld();
-});
-*/
 
 // Percent to save control
 document.getElementById('setSavePercentBtn').addEventListener('click', () => {
@@ -434,3 +447,28 @@ document.getElementById('setSavePercentBtn').addEventListener('click', () => {
         alert('Percent to save must be between 0 and 100.');
     }
 });
+
+export function save_best_model() {
+    console.log("ciao");
+
+    const text_weights = rocket_best_brain.brain.extractWeights();
+
+    // Convert the array to a JSON string
+    const dataStr = JSON.stringify(text_weights);
+
+    // Create a Blob from the string
+    const blob = new Blob([dataStr], { type: "text/plain" });
+
+    // Create a link element
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "best_model_weights.txt";
+
+    // Append the link to the document, trigger click, then remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+window.save_best_model = save_best_model;
+

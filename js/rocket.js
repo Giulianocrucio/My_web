@@ -37,7 +37,7 @@ export class rocketBodies {
         // fuel
         this.fuel = 300;
         this.max_fuel = 300;
-        this.step_fuel = 2;
+        this.step_fuel = 3;
         // animations
         this.propulsor_animation = false;
 
@@ -177,7 +177,7 @@ export class rocketBodies {
         const sinAngle = Math.sin(angle);
         const distanceFromGround = (this.distanceGround - this.central_pos().y) / 300; 
 
-        // Create the tensor with the 5 values: [cos(angle), sin(angle), angularVelocity, posX, distanceFromGround]
+        // Create the tensor with the values
         const bodyTensor = [
             cosAngle,
             sinAngle,
@@ -192,28 +192,27 @@ export class rocketBodies {
         this.brain = new NNs();
     }
 
-    loadmodel(){
-        // to do
+    getoutput(){
+        let out = this.brain.forward(this.getinput());
+        return out;
     }
-
+    hasTuchedTheGround(){
+        this.TuchedTheGround = true;
+    }
     think(){
         if (this.brain && typeof this.brain.forward !== 'undefined') {
            let pre;
         if(!this.TuchedTheGround){
-        pre = this.brain.forward(this.getinput());
+            // console.log(this.TuchedTheGround);
+        pre = this.getoutput();
         const coeficent = this.step_fuel;
         for (let i = 0; i < 3; i++) {
             this.fuel -= pre[i] * coeficent;
         }
-        // console.log(this.fuel);
+        // // console.log(this.fuel);
         this.central_force(pre[0]*forceMagnitude);  // Use first output for central force
         this.left_force(pre[1]*forceMagnitude);     // Use second output for left force  
         this.right_force(pre[2]*forceMagnitude);    // Use third output for right force
-        }
-
-        // animation
-        if(this.propulsor_animation){
-            this.animation_prop(pre);
         }
     }
     }
@@ -226,6 +225,7 @@ export class rocketBodies {
             (x/(2*this.max_fuel))+0.5
         )
     }
+
     score_velx(x){
     const absX = Math.abs(x);
     return Math.max(
@@ -237,7 +237,7 @@ export class rocketBodies {
         -absX * 1000 + 15,
         Math.exp(-absX*10)*15
     )/15;
-}
+    }
     // score
     // max scores = ..
     getScore(velocityBeforeImpact = -1){
@@ -245,51 +245,71 @@ export class rocketBodies {
 
         // if impact with the ground
         if(velocityBeforeImpact != -1){
-            score += 5;
+            score += 30;
         }
 
         // check angular velocity
-        let scale = 0;
+        let scale = 2;
         const angleV = this.rk.angularVelocity;
         score += Math.exp(-Math.abs(angleV*100))*scale ;
-        console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
+        // console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
+
+        // check velocity x
+        scale = 10;
+        const velx = Math.abs(Body.getVelocity(this.rk).x);
+        score += this.score_velx(velx)*scale ;
+        // console.log("Angular velocity:", angleV, "=> Score added:", Math.exp(-Math.abs(angleV*100))*scale);
+
 
         // check orientation
-        scale = 15;
+        scale = 300;
         const Angle = Math.abs(this.rk.angle);
         let uprightBonus = Math.exp(-Angle/3)*scale; 
-        if(Angle > Math.PI / 2){
-            uprightBonus = -100;
+        if(Angle > Math.PI / 8){
+            uprightBonus = -25;
         }
+        if(Angle > Math.PI / 6){
+            uprightBonus = -50;
+        }
+        if(Angle > Math.PI / 4){
+            uprightBonus = -300;
+        }
+
+
         score += uprightBonus;
-        console.log("Normalized angle:", Angle, "=> Upright bonus:", uprightBonus);
+        // console.log("Normalized angle:", Angle, "=> Upright bonus:", uprightBonus);
         
 
         // check velocity
-        scale = 150;
+        scale = 300;
         if(velocityBeforeImpact != -1){
-            const vel_bunus = this.score_velx(velocityBeforeImpact)*scale;
+            let vel_bunus = this.score_velx(velocityBeforeImpact)*scale;
+            if(velocityBeforeImpact > 10){
+                vel_bunus = -20;
+            }
+
             score += vel_bunus;
             console.log("Velocity before impact:", velocityBeforeImpact, "=> Vertical impact score:", vel_bunus);
         }
 
         // check fuel
-        scale = 3;
-        score += this.loss_bigval(this.fuel)*scale;
-        console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel))*scale;
+        scale = 2;
+        let bonusfuel = this.loss_bigval(this.fuel)*scale;
+        score += bonusfuel;
+        // console.log("Fuel:", this.fuel, "=> Fuel score:", this.loss_bigval(this.fuel))*scale;
 
 
         // check if it lands under the spawn 
-        scale = 0;
+        scale = 10;
         const offset_x = this.central_pos().x - this.initial_posx; 
         const score_offset_x = Math.exp(-Math.abs(offset_x)/100)*scale;
         score += score_offset_x;
-        console.log("x_offset:", offset_x, "score off: ",score_offset_x);
+        // console.log("x_offset:", offset_x, "score off: ",score_offset_x);
 
 
         // save score
         this.score = score;
-        console.log("Final score:", score);
+        // console.log("Final score:", score);
 
         
 
@@ -298,8 +318,14 @@ export class rocketBodies {
 
     }
 
-    async loadModel(loadPath) {
-        this.brain.loadWeights(loadPath);
+    async saveModel(key) {
+        this.brain.saveModelToLocalStorage(key);
+        console.log("saved: ",this.brain, "\n named:", key);
+    }
+    
+    async loadModel(key) {
+        this.brain.loadModelFromLocalStorage(key);
+        console.log("loaded: ",this.brain, "\n named:", key);
     }
 
 }
