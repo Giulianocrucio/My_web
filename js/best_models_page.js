@@ -14,7 +14,10 @@ const Events = Matter.Events;
  
 let brain_weights = [];
 const filePaths = [
-    '../data/models/best.txt'
+    '../data/models/best.txt',
+    '../data/models/best2.txt',
+    '../data/models/best3.txt',
+    '../data/models/best4.txt'
     ];
 let n_rocket = filePaths.length;
 
@@ -38,7 +41,7 @@ let scores = [];
 
 // timer options
 let time_scale = 1;
-let timer_generation = 8; // in seconds
+let timer_generation = 9; // in seconds
 let timer_duration = timer_generation / time_scale; // in seconds
 let timer;
 
@@ -150,7 +153,7 @@ function createRockets() {
         rockets.push(rocket);
 
         Body.setVelocity(rocket.rk, { x: Math.random()*0.05 - 0.025, y:0 });
-        Body.setAngle(rocket.rk, Math.PI/6 ); 
+        Body.setAngle(rocket.rk, Math.PI/6 - 0.01); 
 
         
     }

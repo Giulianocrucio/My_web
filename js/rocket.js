@@ -203,7 +203,7 @@ export class rocketBodies {
         if (this.brain && typeof this.brain.forward !== 'undefined') {
            let pre;
         if(!this.TuchedTheGround){
-            console.log(this.TuchedTheGround);
+            // console.log(this.TuchedTheGround);
         pre = this.getoutput();
         const coeficent = this.step_fuel;
         for (let i = 0; i < 3; i++) {
