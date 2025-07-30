@@ -11,9 +11,12 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 
 // options
-let n_rocket = 1; 
-let brain_weight;
-const filePath = '../data/models/best.txt';
+ 
+let brain_weights = [];
+const filePaths = [
+    '../data/models/best.txt'
+    ];
+let n_rocket = filePaths.length;
 
 // Render options
 let WIDTH = 1200 ;
@@ -35,7 +38,7 @@ let scores = [];
 
 // timer options
 let time_scale = 1;
-let timer_generation = 10; // in seconds
+let timer_generation = 8; // in seconds
 let timer_duration = timer_generation / time_scale; // in seconds
 let timer;
 
@@ -43,11 +46,11 @@ let timer;
 const particles = [];
 
 
-function addParticles(x, y, direction, count = 30) {
+function addParticles(x, y, direction, count = 100) {
     for (let i = 0; i < count; i++) {
         // Create particles in the specified direction
-        const spread = 0.3 + (Math.random() ); // how much the particles spread
-        const speed = Math.random() * 3 + 15;
+        const spread = 0.2 + (Math.random() ); // how much the particles spread
+        const speed = Math.random() * 5 + 10;
         const angle = direction + (Math.random() - 0.5) * spread;
         
         const particle = new Particle(
@@ -118,14 +121,15 @@ function createGround(){
 
 
 async function loadweights() {
-  try {
-    const response = await fetch(filePath);
-    const text = await response.text();
-    brain_weight = JSON.parse(text);
-    console.log("brain loaded, lenght: ", brain_weight.length); 
-  } catch (err) {
-    console.error('Failed to load or parse the file:', err);
-  }
+    for(let i = 0; i < n_rocket; i++){
+    try {
+        const response = await fetch(filePaths[i]);
+        const text = await response.text();
+        brain_weights.push(JSON.parse(text));
+    } catch (err) {
+        console.error('Failed to load or parse the file:', err);
+    }
+    }
 }
 
 await loadweights();
@@ -138,7 +142,7 @@ function createRockets() {
         /*
         load best models brains
         */
-        rocket.brain.loadWeights(brain_weight);
+        rocket.brain.loadWeights(brain_weights[i]);
         console.log("model loaded");
         rocket.setHigh(FromRocketToGround + high_ground/2 );  
 
