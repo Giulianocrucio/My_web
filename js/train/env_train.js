@@ -440,22 +440,6 @@ document.getElementById('setMutationFactorBtn').addEventListener('click', () => 
         mutation_factor = val;
 });
 
-/*
-// Number of rockets control
-document.getElementById('setNumRocketsBtn').addEventListener('click', () => {
-    const val = parseInt(document.getElementById('numRocketsInput').value, 10);
-        n_rocket = val;
-        n_parents = Math.floor(n_rocket * (save_percent / 100));
-        // Reset scores array to match new n_rocket
-        scores = [];
-        for (let i = 0; i < n_rocket; i++) scores.push(-1);
-        document.getElementById("n_rocket").textContent = `Number of rockets in the simulation: ${n_rocket}`;
-        // Restart simulation to apply changes
-        World.clear(world);
-        Engine.clear(engine);
-        initWorld();
-});
-*/
 
 // Percent to save control
 document.getElementById('setSavePercentBtn').addEventListener('click', () => {
@@ -468,6 +452,30 @@ document.getElementById('setSavePercentBtn').addEventListener('click', () => {
         alert('Percent to save must be between 0 and 100.');
     }
 });
+
+export function save_best_model() {
+    console.log("ciao");
+
+    const text_weights = rocket_best_brain.brain.extractWeights();
+
+    // Convert the array to a JSON string
+    const dataStr = JSON.stringify(text_weights);
+
+    // Create a Blob from the string
+    const blob = new Blob([dataStr], { type: "text/plain" });
+
+    // Create a link element
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "best_model_weights.txt";
+
+    // Append the link to the document, trigger click, then remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+window.save_best_model = save_best_model;
 
 document.getElementById('modelFileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
