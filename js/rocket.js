@@ -416,16 +416,3 @@ export function sortIndeces(input_vec) {
     }
     return indeces;
 }
-
-/*
-    let currentPhase = 1;
-
-    const phaseButton = document.getElementById("phaseButton");
-
-    phaseButton.addEventListener("click", () => {
-
-        currentPhase = currentPhase % 4 + 1;
-
-        phaseButton.textContent = "Phase: " + currentPhase;
-    });
-    */
