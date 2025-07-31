@@ -96,20 +96,6 @@ const ground = Bodies.rectangle(
     }
 );
 
-// Function to add a new box
-function addBox() {
-    const x = Math.random() * 600 + 100;
-    const box = Bodies.rectangle(x, 50, 
-        Math.random() * 40 + 30, 
-        Math.random() * 40 + 30, {
-        render: {
-            fillStyle: `hsl(${Math.random() * 360}, 70%, 60%)`
-        },
-        restitution: Math.random() * 0.8 + 0.2,
-        friction: Math.random() * 0.3
-    });
-    World.add(world, box);
-}
 
 // Function to reset the simulation
 function reset() {
@@ -128,6 +114,8 @@ function createRocket() {
     rocketB.parts.forEach(part => {
         part.slop = 0.1;
     });
+    Body.setVelocity(rocket.rk, { x: Math.random()*0.05 - 0.025, y:0 });
+    Body.setAngle(rocket.rk, Math.PI/6 - 0.01);
 
     World.add(world, rocketB);
 }
@@ -351,5 +339,4 @@ Render.run(render);
 engine.world.gravity.y = 1;
 initWorld();
 // // // console.log(rocket.getScore());
-window.addBox = addBox;
 window.reset = reset;

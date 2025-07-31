@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Portfolio</title>
+    <title>Neural Rocket Landing - AI Project</title>
     <style>
         * {
             margin: 0;
@@ -12,192 +12,319 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #fafafa 0%, #f8f9fa 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2c2c2c;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .hero {
+            background: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero p {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            font-size: 1.1em;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .demo-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 10px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .demo-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            font-weight: 400;
+        }
+
+        .demo-card p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .demo-card a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .demo-card a:hover {
+            background: #5a67d8;
+        }
+
+        .tech-section {
+            background: #f5f5f5;
+            padding: 80px 0;
+        }
+
+        .tech-section h2 {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2em;
+            font-weight: 300;
+            color: #333;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tech-item {
+            text-align: center;
+        }
+
+        .tech-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: 400;
+        }
+
+        .tech-item p {
+            color: #666;
+            font-size: 0.9em;
             line-height: 1.6;
         }
 
-        header {
+        .implementation-details {
+            background: white;
+            padding: 80px 0;
+        }
+
+        .implementation-details h2 {
             text-align: center;
-            max-width: 600px;
-            padding: 4rem 2rem;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.03),
-                0 8px 16px rgba(0, 0, 0, 0.02),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 50px;
+            font-size: 2em;
+            font-weight: 300;
+            color: #333;
         }
 
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+        .detail-blocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 200;
-            letter-spacing: -0.02em;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
+        .detail-block {
+            background: #fafafa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
         }
 
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
-        }
-
-        nav {
-            margin-top: 2rem;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        nav li {
-            width: 100%;
-            max-width: 280px;
-        }
-
-        nav a {
-            display: block;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            color: #4a4a4a;
+        .detail-block h3 {
+            color: #333;
+            margin-bottom: 15px;
             font-weight: 400;
-            font-size: 1.1rem;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .detail-block ul {
+            list-style: none;
+            color: #666;
+        }
+
+        .detail-block li {
+            margin-bottom: 10px;
+            padding-left: 20px;
             position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
         }
 
-        nav a::before {
-            content: '';
+        .detail-block li:before {
+            content: "→";
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.6s ease;
+            left: 0;
+            color: #667eea;
         }
 
-        nav a:hover::before {
-            left: 100%;
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            font-size: 0.9em;
         }
 
-        nav a:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 12px 24px rgba(0, 0, 0, 0.08),
-                0 4px 8px rgba(0, 0, 0, 0.04);
-            border-color: rgba(0, 0, 0, 0.12);
-            background: rgba(255, 255, 255, 0.9);
-            color: #2c2c2c;
-        }
-
-        nav a:active {
-            transform: translateY(0);
-            transition: transform 0.1s ease;
-        }
-
-        @media (min-width: 640px) {
-            nav ul {
-                flex-direction: row;
-                justify-content: center;
-                gap: 2rem;
-            }
-
-            nav li {
-                width: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                margin: 1rem;
-                padding: 3rem 1.5rem;
-            }
-
+        @media (max-width: 768px) {
             h1 {
-                font-size: 2.5rem;
+                font-size: 2em;
             }
-
-            nav a {
-                padding: 0.875rem 1.5rem;
-                font-size: 1rem;
+            
+            .hero p {
+                font-size: 1em;
             }
-        }
-
-        /* Subtle animation on load */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+            
+            .demo-links {
+                grid-template-columns: 1fr;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        header {
-            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        h1 {
-            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-        }
-
-        nav {
-            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome</h1>
-        <nav>
-            <ul>
-                <li><a href="pages/falling_box.html">Box</a></li>
-                <li><a href="pages/rocket.html">Rocket</a></li>
-                <li><a href="pages/train_env.html">Train rocket</a></li>
-                <li><a href="pages/best_models.html">Best rockets</a></li>
-            </ul>
-        </nav>
+        <div class="container">
+            <h1>Neural Rocket Landing</h1>
+            <p class="subtitle">Teaching AI to Land Rockets Using Genetic Algorithms</p>
+        </div>
     </header>
+
+    <section class="hero">
+        <div class="container">
+            <p>
+                An interactive demonstration of neural networks learning to land rockets through genetic algorithms. 
+                Watch as populations of AI-controlled rockets evolve over generations, developing increasingly sophisticated 
+                landing strategies through natural selection and mutation.
+            </p>
+
+            <div class="demo-links">
+                <div class="demo-card">
+                    <h3>🎮 Manual Control</h3>
+                    <p>Take control of a rocket yourself using W, A, and D keys. Experience the challenge of landing with three thrusters.</p>
+                    <a href="pages\rocket.html">Try Manual Control</a>
+                </div>
+
+                <div class="demo-card">
+                    <h3>🧬 Training Environment</h3>
+                    <p>Watch generations of rockets learn to land. Adjust mutation rates and survival percentages in real-time.</p>
+                    <a href="pages\train_env.html">View Training</a>
+                </div>
+
+                <div class="demo-card">
+                    <h3>🏆 Best Performances</h3>
+                    <p>See the most successful rockets in action. Observe the landing strategies evolved by the AI.</p>
+                    <a href="pages\best_models.html">Watch Best Rockets</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tech-section">
+        <div class="container">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>Neural Networks</h4>
+                    <p>Built from scratch with 3 hidden layers of 16,32,16 neurons each, using ReLU activation</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Genetic Algorithm</h4>
+                    <p>Roulette wheel selection with crossover breeding and adjustable mutation rates</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Matter.js Physics</h4>
+                    <p>Realistic physics simulation for rocket movement and collision detection</p>
+                </div>
+                <div class="tech-item">
+                    <h4>JavaScript & HTML5</h4>
+                    <p>Pure JavaScript implementation with Canvas rendering for smooth visualization</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="implementation-details">
+        <div class="container">
+            <h2>Implementation Details</h2>
+            <div class="detail-blocks">
+                <div class="detail-block">
+                    <h3>Rocket Design</h3>
+                    <ul>
+                        <li>Three thrusters: left, right, and center</li>
+                        <li>Binary thruster states (on/off)</li>
+                        <li>Physics-based movement and rotation</li>
+                        <li>Collision detection with ground</li>
+                    </ul>
+                </div>
+
+                <div class="detail-block">
+                    <h3>Neural Network Architecture</h3>
+                    <ul>
+                        <li>Input: distance, orientation, angular velocity...</li>
+                        <li>3 hidden layers with 16,32,16 neurons</li>
+                        <li>ReLU activation function</li>
+                        <li>Output: 3 binary thruster controls</li>
+                    </ul>
+                </div>
+
+                <div class="detail-block">
+                    <h3>Evolution Process</h3>
+                    <ul>
+                        <li>Fitness scoring based on landing quality</li>
+                        <li>Roulette wheel parent selection</li>
+                        <li>Crossover breeding from two parents</li>
+                        <li>Adjustable mutation factor</li>
+                    </ul>
+                </div>
+
+                <div class="detail-block">
+                    <h3>Visualization Features</h3>
+                    <ul>
+                        <li>Real-time performance graphs</li>
+                        <li>Population statistics tracking</li>
+                        <li>Interactive parameter controls</li>
+                        <li>Multi-generation comparisons</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

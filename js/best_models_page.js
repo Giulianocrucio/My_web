@@ -15,7 +15,6 @@ const Events = Matter.Events;
 let brain_weights = [];
 const filePaths = [
     '../data/models/best.txt',
-    '../data/models/best2.txt',
     '../data/models/best3.txt',
     '../data/models/best4.txt'
     ];
@@ -50,10 +49,13 @@ const particles = [];
 
 
 function addParticles(x, y, direction, count = 100) {
-    for (let i = 0; i < count; i++) {
+    let realcount = count*time_scale;
+    for (let i = 0; i < realcount; i++) {
         // Create particles in the specified direction
-        const spread = 0.2 + (Math.random() ); // how much the particles spread
-        const speed = Math.random() * 5 + 10;
+        let spread = 0.2 + (Math.random() ); // how much the particles spread
+        let speed = Math.random() * 5 + 10;
+        speed = speed*time_scale;
+        spread = spread/time_scale;
         const angle = direction + (Math.random() - 0.5) * spread;
         
         const particle = new Particle(
