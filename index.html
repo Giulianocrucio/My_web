@@ -226,105 +226,111 @@
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <p>
-                An interactive demonstration of neural networks learning to land rockets through genetic algorithms. 
-                Watch as populations of AI-controlled rockets evolve over generations, developing increasingly sophisticated 
-                landing strategies through natural selection and mutation.
-            </p>
+<section class="hero">
+    <div class="container">
+      <p>
+        This project showcases a neural network learning to land rockets using a genetic algorithm, all rendered in a browser with JavaScript, HTML5, and the Matter.js physics engine. 
+    </p>
+    <p>
+        Rockets are equipped with three binary thrusters and controlled either manually (W, A, D keys) or by AI. The neural networks are trained from scratch and evolve over generations, optimizing landing performance through selection, crossover, and mutation.
+    </p>
+    <p>
+        Users can tweak training parameters in real time and monitor learning progress via performance graphs that track average and top scores across generations.
+    </p>Users
+ 
 
-            <div class="demo-links">
-                <div class="demo-card">
-                    <h3>🎮 Manual Control</h3>
-                    <p>Take control of a rocket yourself using W, A, and D keys. Experience the challenge of landing with three thrusters.</p>
-                    <a href="pages\rocket.html">Try Manual Control</a>
-                </div>
+        <div class="demo-links">
+            <div class="demo-card">
+                <h3> Manual Control</h3>
+                <p>Try flying the rocket yourself using the W, A, and D keys. Test your skills with limited thruster control and realistic physics.</p>
+                <a href="pages/rocket.html">Try Manual Control</a>
+            </div>
 
-                <div class="demo-card">
-                    <h3>🧬 Training Environment</h3>
-                    <p>Watch generations of rockets learn to land. Adjust mutation rates and survival percentages in real-time.</p>
-                    <a href="pages\train_env.html">View Training</a>
-                </div>
+            <div class="demo-card">
+                <h3> Training Environment</h3>
+                <p>Watch neural networks learn to land. Customize genetic algorithm parameters like mutation rate and survival percentage.</p>
+                <a href="pages/train_env.html">View Training</a>
+            </div>
 
-                <div class="demo-card">
-                    <h3>🏆 Best Performances</h3>
-                    <p>See the most successful rockets in action. Observe the landing strategies evolved by the AI.</p>
-                    <a href="pages\best_models.html">Watch Best Rockets</a>
-                </div>
+            <div class="demo-card">
+                <h3> Best Performances</h3>
+                <p>View the most successful rockets. Observe how AI strategies evolve over time through generations of trial and error.</p>
+                <a href="pages/best_models.html">Watch Best Rockets</a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="tech-section">
-        <div class="container">
-            <h2>Technology Stack</h2>
-            <div class="tech-grid">
-                <div class="tech-item">
-                    <h4>Neural Networks</h4>
-                    <p>Built from scratch with 3 hidden layers of 16,32,16 neurons each, using ReLU activation</p>
-                </div>
-                <div class="tech-item">
-                    <h4>Genetic Algorithm</h4>
-                    <p>Roulette wheel selection with crossover breeding and adjustable mutation rates</p>
-                </div>
-                <div class="tech-item">
-                    <h4>Matter.js Physics</h4>
-                    <p>Realistic physics simulation for rocket movement and collision detection</p>
-                </div>
-                <div class="tech-item">
-                    <h4>JavaScript & HTML5</h4>
-                    <p>Pure JavaScript implementation with Canvas rendering for smooth visualization</p>
-                </div>
+<section class="tech-section">
+    <div class="container">
+        <h2>Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <h4>Neural Networks</h4>
+                <p>Implemented from scratch with two hidden layers of 16 neurons each, using ReLU activation. Fully integrated with a custom training environment.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Genetic Algorithm</h4>
+                <p>Utilizes roulette wheel selection, crossover reproduction from two parents, and an adjustable mutation rate to evolve landing strategies.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Matter.js Physics</h4>
+                <p>Handles realistic physics simulation including thrust, gravity, rotation, and collision detection between rockets and the landing platform.</p>
+            </div>
+            <div class="tech-item">
+                <h4>JavaScript & HTML5</h4>
+                <p>Built entirely in vanilla JavaScript with HTML5 Canvas for rendering. No external ML libraries were used — everything is coded manually.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="implementation-details">
-        <div class="container">
-            <h2>Implementation Details</h2>
-            <div class="detail-blocks">
-                <div class="detail-block">
-                    <h3>Rocket Design</h3>
-                    <ul>
-                        <li>Three thrusters: left, right, and center</li>
-                        <li>Binary thruster states (on/off)</li>
-                        <li>Physics-based movement and rotation</li>
-                        <li>Collision detection with ground</li>
-                    </ul>
-                </div>
+<section class="implementation-details">
+    <div class="container">
+        <h2>Implementation Details</h2>
+        <div class="detail-blocks">
+            <div class="detail-block">
+                <h3>Rocket Design</h3>
+                <ul>
+                    <li>Three thrusters: bottom-left, bottom-right, and center</li>
+                    <li>Each thruster operates in binary mode (on/off)</li>
+                    <li>Movement and rotation governed by real-time physics</li>
+                    <li>Ground collision detection for landing evaluation</li>
+                </ul>
+            </div>
 
-                <div class="detail-block">
-                    <h3>Neural Network Architecture</h3>
-                    <ul>
-                        <li>Input: distance, orientation, angular velocity...</li>
-                        <li>3 hidden layers with 16,32,16 neurons</li>
-                        <li>ReLU activation function</li>
-                        <li>Output: 3 binary thruster controls</li>
-                    </ul>
-                </div>
+            <div class="detail-block">
+                <h3>Neural Network Architecture</h3>
+                <ul>
+                    <li>Inputs: vertical distance, horizontal position, angle, angular velocity, etc.</li>
+                    <li>Two hidden layers, each with 16 neurons</li>
+                    <li>Activation function: ReLU</li>
+                    <li>Outputs: three binary values controlling thrusters</li>
+                </ul>
+            </div>
 
-                <div class="detail-block">
-                    <h3>Evolution Process</h3>
-                    <ul>
-                        <li>Fitness scoring based on landing quality</li>
-                        <li>Roulette wheel parent selection</li>
-                        <li>Crossover breeding from two parents</li>
-                        <li>Adjustable mutation factor</li>
-                    </ul>
-                </div>
+            <div class="detail-block">
+                <h3>Evolution Process</h3>
+                <ul>
+                    <li>Fitness based on landing success (orientation, impact speed, stability)</li>
+                    <li>Roulette wheel selection of parent rockets</li>
+                    <li>Crossover combines weights from two parents</li>
+                    <li>Mutations applied probabilistically per weight</li>
+                    <li>User-adjustable mutation factor and survival rate</li>
+                </ul>
+            </div>
 
-                <div class="detail-block">
-                    <h3>Visualization Features</h3>
-                    <ul>
-                        <li>Real-time performance graphs</li>
-                        <li>Population statistics tracking</li>
-                        <li>Interactive parameter controls</li>
-                        <li>Multi-generation comparisons</li>
-                    </ul>
-                </div>
+            <div class="detail-block">
+                <h3>Visualization Features</h3>
+                <ul>
+                    <li>Live-updating graph of population performance</li>
+                    <li>Tracking of average, top 50%, and top 10% scores</li>
+                    <li>Interactive UI for tuning algorithm parameters</li>
+                    <li>Replay of top-performing rockets across generations</li>
+                </ul>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 </body>
 </html>
